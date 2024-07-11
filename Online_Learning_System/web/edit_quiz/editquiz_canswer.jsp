@@ -10,6 +10,7 @@
             </div>
             <div class="modal-body">
                 <form id="createQuestionForm" action="editquizcrudquestion?action=create&quizId=${quizEdit.getQuizId()}" method="POST" onsubmit="return validateForm(event)">
+                    <input hidden="" name="quizId" value="${quizEdit.getQuizId()}">
                     <div class="form-group row">
                         <label for="questionNoInput" class="col-form-label col-md-3">Question No:</label>
                         <div class="col-md-9">

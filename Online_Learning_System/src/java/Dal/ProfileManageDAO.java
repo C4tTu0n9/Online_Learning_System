@@ -38,7 +38,7 @@ public class ProfileManageDAO extends DBContext {
                      on a.AccountId = t.MentorId
                      where p.ManagedBy = ? and t.CourseId = ?) tbl1
                      on p1.ProfileId = tbl1.AccountId
-                     join Account a on p1.ProfileId = a.AccountId where p1.ManagedBy = ?""";
+                     join Account a on p1.ProfileId = a.AccountId where p1.ManagedBy = ? and a.Status = 1""";
         try {
             statement = connection.prepareStatement(sql);
             statement.setInt(1, manager_account_id);
@@ -74,7 +74,7 @@ public class ProfileManageDAO extends DBContext {
                      on a.AccountId = t.MentorId
                      where p.ManagedBy = ? and t.CourseId = null) tbl1
                      on p1.ProfileId = tbl1.AccountId
-                     join Account a on p1.ProfileId = a.AccountId where p1.ManagedBy = ?""";
+                     join Account a on p1.ProfileId = a.AccountId where p1.ManagedBy = ? and a.Status = 1""";
         try {
             statement = connection.prepareStatement(sql);
             statement.setInt(1, manager_account_id);

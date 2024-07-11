@@ -27,7 +27,7 @@ public class Course {
     private int amountSudentJoin;
     private double star;
     private double sumOfRating;
-
+    private int lessonId;
     private int leture;
     private int firstlessonid;
 
@@ -49,6 +49,8 @@ public class Course {
         this.study_time = study_time;
         this.is_active = is_active;
     }
+        
+        
 
 
     //Dùng để get new course 
@@ -103,6 +105,24 @@ public class Course {
 
     }
 
+    
+    public Course(int course_id, int create_by, int lessonId) {
+        this.course_id = course_id;
+        this.create_by = create_by;
+        this.lessonId = lessonId;
+    }
+
+    public int getLessonId() {
+        return lessonId;
+    }
+
+    public void setLessonId(int lessonId) {
+        this.lessonId = lessonId;
+    }
+
+    
+    
+
     public Course(int course_id) {
         this.course_id = course_id;
     }
@@ -113,6 +133,8 @@ public class Course {
         this.image = image;
         this.create_by = create_by;
     }
+    
+    
 
     public int getCourse_id() {
         return course_id;

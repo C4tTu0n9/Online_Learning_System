@@ -24,7 +24,7 @@ public class CourseManageDTO {
     private String study_time;
     private boolean status;
     private int number_enrollment;
-
+    
     public CourseManageDTO() {
     }
 
@@ -77,8 +77,8 @@ public class CourseManageDTO {
         this.course_category_id = course_category_id;
 
     }
-    
-    
+        
+        
 
     public int getCourse_id() {
         return course_id;

@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
@@ -83,6 +84,7 @@ public class DoQuizController extends HttpServlet {
         
         Quiz quiz = quizDAO.findQuizByModuleId(moduleId);
         // lấy ra câu trả lời của người dùng thực hiện quiz
+        
         ArrayList<UserAnswer> listUserAnswer = quizDAO.getListUserAnswerByQuizIdAndAccId(acc.getAccount_id(), quiz.getQuizId());
         // lấy ra điểm mới nhất của người dùng
         ScoreQuiz scoreQuiz = quizDAO.findScoreDoQuizByAccountIdAndQuizId(acc.getAccount_id(), quiz.getQuizId());
@@ -132,6 +134,7 @@ public class DoQuizController extends HttpServlet {
                 questionResultMap.put(questionId, "Incorrect");
             }
         }
+        Course course = quizDAO.findCourseIdAndCreateByByModuleId(moduleId);
 
         // Đặt các thuộc tính và chuyển tiếp yêu cầu
         request.setAttribute("listAnswersCorrect", listAnswersCorrect);
@@ -140,6 +143,7 @@ public class DoQuizController extends HttpServlet {
         request.setAttribute("countAnswer", countAnswer);
         request.setAttribute("scoreQuiz", scoreQuiz);
         request.setAttribute("quizDoQuiz", quiz);
+        request.setAttribute("course", course);
         request.setAttribute("listQuestionsByMId", listQuestionByModuleId);
         request.setAttribute("listAnswerByMId", listAnswerByModuleId);
          request.getRequestDispatcher("do_quiz/doquizsubmit.jsp").forward(request, response);

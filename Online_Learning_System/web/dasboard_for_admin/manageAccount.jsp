@@ -162,7 +162,7 @@
                                     <div>
 
                                         <a href="manageAccount?action=addAccount" class="btn btn-primary">+ Add new</a>
-                                        <a href="manageAccount?action=import" class="btn btn-primary">- Delete</a>
+                                        <a href="manageAccount?action=import" style="background-color: orangered" class="btn btn-primary">- Delete</a>
 
                                     </div>
                                 </div>

@@ -136,16 +136,18 @@
                                     <!--                                <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-social-links">Social links</a>
                                                                     <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-connections">Connections</a>-->
                                     <!--                                <a class="list-group-item list-group-item-action" data-toggle="list" href="#account-notifications">Notifications</a>-->
-                                    <a class="list-group-item list-group-item-action active" data-toggle="list" href="#Courses">Courses </a>
+                                    <a class="list-group-item list-group-item-action active" data-toggle="list" href="#Courses">Courses</a>
+                                <c:if test="${my_role == 2}">
                                     <a class="list-group-item list-group-item-action" href="mentor-manage">Mentors</a>
-                                </div>
+                                </c:if>
                             </div>
+                        </div>
 
 
-                            <div class="col-md-9 card_mine">
-                                <div class="tab-content">
-                                    <div class="tab-pane fade active show" id="Courses">
-                                        <h3 style="color: red">${requestScope.error}</h3>
+                        <div class="col-md-9 card_mine">
+                            <div class="tab-content">
+                                <div class="tab-pane fade active show" id="Courses">
+                                    <h3 style="color: red">${requestScope.error}</h3>
 
                                     <div>
                                         <a href="course-manage?action=add_new_course" class="btn btn-outline-success">Add New Course</a>
@@ -161,7 +163,7 @@
 
                                                     </div>
                                                     <div class="col-lg-8">
-                                                            <label class="form-label" style="color: black; font-size: 15px">Mentors:</label>
+                                                        <label class="form-label" style="color: black; font-size: 15px">Mentors:</label>
                                                         <c:forEach items="${list_my_mentors}" var="mentor">
                                                             <c:if test="${mentor.teaching_course == c.course_id}">
                                                                 ${mentor.fullname}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -171,6 +173,7 @@
                                                         <label class="form-label" style="color: #06BBCC; font-size: 25px ">${c.course_name}</label><br>
                                                         <label class="form-label" style="color: #000; font-size: 15px ">Category: ${c.course_category_id}</label><br>
                                                         <label class="form-label" style="color: #000; font-size: 15px ">Create On: ${c.create_date}</label><br>
+                                                        <label class="form-label" style="color: #000; font-size: 15px ">Price: ${c.price}</label><br>
 
                                                         <label class="form-label" style="color: #000; font-size: 15px ">Status: </label>
                                                         <c:if test="${c.status}">

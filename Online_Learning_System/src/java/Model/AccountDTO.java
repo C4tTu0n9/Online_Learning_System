@@ -16,9 +16,12 @@ public class AccountDTO {
     private String fullName;
     private String email;
     private String password;
-    private boolean status;
     private boolean gender;
-
+    String avt;
+    double money;
+    int managed_by;
+    int teaching_course;
+    private boolean status;
     //1 - active 
     //2 - inactive
     private int role_id;
@@ -78,6 +81,22 @@ public class AccountDTO {
         this.password = password;
     }
 
+    public AccountDTO(int account_id, String fullName, String email, String password, boolean gender, String avt, double money, int managed_by, boolean status, int role_id) {
+        this.account_id = account_id;
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.gender = gender;
+        this.avt = avt;
+        this.money = money;
+        this.managed_by = managed_by;
+        this.teaching_course = teaching_course;
+        this.status = status;
+        this.role_id = role_id;
+    }
+    
+    
+
     public int getAccount_id() {
         return account_id;
     }
@@ -128,7 +147,7 @@ public class AccountDTO {
         }
         return role;
     }
-    
+
     public boolean isStatus() {
         return status;
     }
@@ -153,11 +172,41 @@ public class AccountDTO {
         this.gender = gender;
     }
 
+    public String getAvt() {
+        return avt;
+    }
+
+    public void setAvt(String avt) {
+        this.avt = avt;
+    }
+
+    public double getMoney() {
+        return money;
+    }
+
+    public void setMoney(double money) {
+        this.money = money;
+    }
+
+    public int getManaged_by() {
+        return managed_by;
+    }
+
+    public void setManaged_by(int managed_by) {
+        this.managed_by = managed_by;
+    }
+
+    public int getTeaching_course() {
+        return teaching_course;
+    }
+
+    public void setTeaching_course(int teaching_course) {
+        this.teaching_course = teaching_course;
+    }
+
     @Override
     public String toString() {
         return "AccountDTO{" + "account_id=" + account_id + ", fullName=" + fullName + ", email=" + email + ", password=" + password + ", status=" + status + ", gender=" + gender + ", role_id=" + role_id + '}';
     }
 
-    
-    
 }

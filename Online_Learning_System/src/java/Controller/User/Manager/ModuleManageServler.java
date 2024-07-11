@@ -31,6 +31,11 @@ import java.util.logging.Logger;
  */
 public class ModuleManageServler extends HttpServlet {
 
+    LessonManageDAO lesson_manage_dao = new LessonManageDAO();
+    ModuleDAO module_dao = new ModuleDAO();
+    CourseManageDAO course_manage_DAO = new CourseManageDAO();
+    QuizDAO quiz_dao = new QuizDAO();
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -73,25 +78,25 @@ public class ModuleManageServler extends HttpServlet {
         String module_id = request.getParameter("moduleId");
         String cid = request.getParameter("cid");
         String action = request.getParameter("action") == null ? "" : request.getParameter("action");
-        LessonManageDAO lesson_manage_dao = new LessonManageDAO();
-        ModuleDAO module_dao = new ModuleDAO();
-        CourseManageDAO course_manage_DAO = new CourseManageDAO();
-        QuizDAO quiz_dao = new QuizDAO();
-        
+
         AccountDTO my_account = (AccountDTO) session.getAttribute("account");
         switch (action) {
             case "update":
                 updateModule(request, response, module_id, cid);
                 return;
-            case "delete":
-                deleteModule(request, response, module_id, cid);
-                return;
+//            case "delete":
+//                deleteModule(request, response, module_id, cid);
+//                return;
             default:
                 ArrayList<LessonDTO> list_lesson_by_moduleId = lesson_manage_dao.getListlessonByModuleId(module_id);
                 CourseManageDTO my_managed_course = course_manage_DAO.getMyManagedCourseById(my_account.getAccount_id(), cid);
                 ArrayList<ModuleDTO> list_module = module_dao.getListModulByCid(cid);
                 ArrayList<Quiz> list_quiz_by_moduleId = quiz_dao.getListQuizByModuleId(Integer.parseInt(module_id));
-                
+
+//1 module chi co 1 quiz
+                if (list_quiz_by_moduleId.size() == 1) {
+                    request.setAttribute("quiz_exist", list_quiz_by_moduleId.size());
+                }
                 request.setAttribute("list_lesson_in_module", list_lesson_by_moduleId);
                 request.setAttribute("list_module", list_module);
                 request.setAttribute("cid", cid);
@@ -117,28 +122,35 @@ public class ModuleManageServler extends HttpServlet {
         String module_id = request.getParameter("moduleId");
         String cid = request.getParameter("cid");
         String action = request.getParameter("action") == null ? "" : request.getParameter("action");
-        LessonManageDAO lesson_manage_dao = new LessonManageDAO();
-        ModuleDAO module_dao = new ModuleDAO();
-        CourseManageDAO course_manage_DAO = new CourseManageDAO();
+
         AccountDTO my_account = (AccountDTO) session.getAttribute("account");
         switch (action) {
-            case "update":
+            case "update" -> {
                 updateModule(request, response, module_id, cid);
                 return;
-            case "delete":
+            }
+            case "delete" -> {
                 deleteModule(request, response, module_id, cid);
                 return;
-            default:
+            }
+            default -> {
                 ArrayList<LessonDTO> list_lesson_by_moduleId = lesson_manage_dao.getListlessonByModuleId(module_id);
                 CourseManageDTO my_managed_course = course_manage_DAO.getMyManagedCourseById(my_account.getAccount_id(), cid);
                 ArrayList<ModuleDTO> list_module = module_dao.getListModulByCid(cid);
+                ArrayList<Quiz> list_quiz_by_moduleId = quiz_dao.getListQuizByModuleId(Integer.parseInt(module_id));
 
+//1 module chi co 1 quiz
+                if (list_quiz_by_moduleId.size() == 1) {
+                    request.setAttribute("quiz_exist", list_quiz_by_moduleId.size());
+                }
                 request.setAttribute("list_lesson_in_module", list_lesson_by_moduleId);
                 request.setAttribute("list_module", list_module);
                 request.setAttribute("cid", cid);
                 request.setAttribute("module_id", module_id);
                 request.setAttribute("my_managed_course", my_managed_course);
+                request.setAttribute("list_quiz_by_moduleId", list_quiz_by_moduleId);
                 request.getRequestDispatcher("EditModule.jsp").forward(request, response);
+            }
         }
     }
 
@@ -154,44 +166,51 @@ public class ModuleManageServler extends HttpServlet {
 
     private void updateModule(HttpServletRequest request, HttpServletResponse response, String module_id, String cid) throws ServletException, IOException {
         String module_name = request.getParameter("module_name");
-        ModuleDAO module_dao = new ModuleDAO();
         ModuleDTO update_module = new ModuleDTO(Integer.parseInt(module_id), module_name);
         module_dao.updateModuleName(update_module);
 
         HttpSession session = request.getSession();
-        LessonManageDAO lesson_manage_dao = new LessonManageDAO();
-        CourseManageDAO course_manage_DAO = new CourseManageDAO();
         AccountDTO my_account = (AccountDTO) session.getAttribute("account");
         ArrayList<LessonDTO> list_lesson_by_moduleId = lesson_manage_dao.getListlessonByModuleId(module_id);
         CourseManageDTO my_managed_course = course_manage_DAO.getMyManagedCourseById(my_account.getAccount_id(), cid);
         ArrayList<ModuleDTO> list_module = module_dao.getListModulByCid(cid);
+        ArrayList<Quiz> list_quiz_by_moduleId = quiz_dao.getListQuizByModuleId(Integer.parseInt(module_id));
 
+//1 module chi co 1 quiz
+        if (list_quiz_by_moduleId.size() == 1) {
+            request.setAttribute("quiz_exist", list_quiz_by_moduleId.size());
+        }
         request.setAttribute("list_lesson_in_module", list_lesson_by_moduleId);
         request.setAttribute("list_module", list_module);
         request.setAttribute("cid", cid);
         request.setAttribute("module_id", module_id);
         request.setAttribute("my_managed_course", my_managed_course);
+        request.setAttribute("list_quiz_by_moduleId", list_quiz_by_moduleId);
         request.getRequestDispatcher("EditModule.jsp").forward(request, response);
     }
 
     private void deleteModule(HttpServletRequest request, HttpServletResponse response, String module_id, String cid) throws ServletException, IOException {
-        ModuleDAO module_dao = new ModuleDAO();
         ModuleDTO update_module = new ModuleDTO(Integer.parseInt(module_id), null);
-        module_dao.deleteModule(update_module);
+        module_dao.deleteModule(update_module.getModuleid());
 
         HttpSession session = request.getSession();
-        LessonManageDAO lesson_manage_dao = new LessonManageDAO();
-        CourseManageDAO course_manage_DAO = new CourseManageDAO();
+
         AccountDTO my_account = (AccountDTO) session.getAttribute("account");
         ArrayList<LessonDTO> list_lesson_by_moduleId = lesson_manage_dao.getListlessonByModuleId(module_id);
         CourseManageDTO my_managed_course = course_manage_DAO.getMyManagedCourseById(my_account.getAccount_id(), cid);
         ArrayList<ModuleDTO> list_module = module_dao.getListModulByCid(cid);
+        ArrayList<Quiz> list_quiz_by_moduleId = quiz_dao.getListQuizByModuleId(Integer.parseInt(module_id));
 
+//1 module chi co 1 quiz
+        if (list_quiz_by_moduleId.size() == 1) {
+            request.setAttribute("quiz_exist", list_quiz_by_moduleId.size());
+        }
         request.setAttribute("list_lesson_in_module", list_lesson_by_moduleId);
         request.setAttribute("list_module", list_module);
         request.setAttribute("cid", cid);
         request.setAttribute("module_id", module_id);
         request.setAttribute("my_managed_course", my_managed_course);
+        request.setAttribute("list_quiz_by_moduleId", list_quiz_by_moduleId);
         request.getRequestDispatcher("EditModule.jsp").forward(request, response);
     }
 

@@ -2,12 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package Controller.User.Manager;
 
 import Dal.QuizDAO;
 import Model.Answer;
+import Model.Modules;
 import Model.Questions;
+import Model.Quiz;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -22,34 +23,39 @@ import java.util.ArrayList;
  * @author hatro
  */
 public class EditQuizCRUDQuestions extends HttpServlet {
+
     QuizDAO quizDAO = new QuizDAO();
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet EditQuizCRUDQuestions</title>");  
+            out.println("<title>Servlet EditQuizCRUDQuestions</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet EditQuizCRUDQuestions at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet EditQuizCRUDQuestions at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -57,12 +63,22 @@ public class EditQuizCRUDQuestions extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
+            throws ServletException, IOException {
+        int quizId = Integer.parseInt(request.getParameter("quizId"));
+        Quiz quizEdit = quizDAO.GetQuizByQuizId(quizId);
+        Modules moduleOfQuizEdit = quizDAO.GetModulebyQuizId(quizId);
+        ArrayList<Questions> listQuestions = quizDAO.getListQuestionsByQuizId(quizId);
+        ArrayList<Answer> listAnswers = quizDAO.getListAnswers();
+        request.setAttribute("quizEdit", quizEdit);
+        request.setAttribute("listQuestions", listQuestions);
+        request.setAttribute("listAnswers", listAnswers);
+        request.setAttribute("moduleOfQuizEdit", moduleOfQuizEdit);
+        request.getRequestDispatcher("edit_quiz/editquestion.jsp").forward(request, response);
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -70,9 +86,12 @@ public class EditQuizCRUDQuestions extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         // lấy ra quiz id để trả về đúng trang edit quiz cần đến
+//        courseId 
+//        moduleId
         int quizId = Integer.parseInt(request.getParameter("quizId"));
+        Modules module = quizDAO.getCourseIdAndModuleIdByQuizId(quizId);
         //get action
         String action = request.getParameter("action") == null
                 ? ""
@@ -89,11 +108,15 @@ public class EditQuizCRUDQuestions extends HttpServlet {
                 editQuestion(request, response);
             default:
         }
-        response.sendRedirect("editquiz?quizId="+quizId);
+//        response.sendRedirect("editquiz?action=edit&cid=" + module.getCourseid() + 
+//                "&moduleId=" + module.getModuleid() + "&quizId=" + quizId);
+
+          response.sendRedirect("editquizcrudquestion?quizId="+ quizId);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
@@ -121,14 +144,13 @@ public class EditQuizCRUDQuestions extends HttpServlet {
         }
         quizDAO.insertAnswers(answers);
         quizDAO.updateTypeQuestion(questions);
-        
+
     }
-    
 
     private void deleteQuestion(HttpServletRequest request, HttpServletResponse response) {
         int quizId = Integer.parseInt(request.getParameter("quizId"));
         int questionId = Integer.parseInt(request.getParameter("id"));
-        quizDAO.deleteQuestionById(questionId, quizId);
+        quizDAO.deleteQuestionDoQuizById(questionId);
     }
 
     private void editQuestion(HttpServletRequest request, HttpServletResponse response) {

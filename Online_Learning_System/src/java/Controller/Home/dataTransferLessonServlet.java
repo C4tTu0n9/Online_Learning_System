@@ -4,6 +4,10 @@
  */
 package Controller.Home;
 
+import Dal.LessonDAO;
+import Model.AccountDTO;
+import Model.Enrollment;
+import Model.TeachingDTO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +16,11 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -58,29 +67,50 @@ public class dataTransferLessonServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String lessonid = request.getParameter("lessonid");
-        String courseid = request.getParameter("cid");
-        String createby = request.getParameter("createBy");
 
-        String lastLessonId = null;
-        Cookie[] cookies = request.getCookies();
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (cookie.getName().equals("lastLessonId_" + courseid)) {
-                    lastLessonId = cookie.getValue();
-                    break;
+        try {
+            HttpSession session = request.getSession();
+            LessonDAO dao = new LessonDAO();
+            String lessonid = request.getParameter("lessonid");
+            String courseid = request.getParameter("cid");
+            String createby = request.getParameter("createBy");
+            AccountDTO acc = (AccountDTO) session.getAttribute("account");
+            String price = request.getParameter("price");
+            String ndck = request.getParameter("ndck");
+            ArrayList<Enrollment> listEnrollment = dao.getEnrollmentByAccountId(acc.getAccount_id());
+            String lastLessonId = null;
+            Cookie[] cookies = request.getCookies();
+            if (cookies != null) {
+                for (Cookie cookie : cookies) {
+                    if (cookie.getName().equals("lastLessonId_" + courseid)) {
+                        lastLessonId = cookie.getValue();
+                        break;
+                    }
                 }
             }
-        }
 
-       
-        if (lastLessonId == null) {
-            // Nếu không có cookie, bạn có thể đặt giá trị mặc định, ví dụ: bài học đầu tiên
-            //String lessonid = lessonidObj.toString();
-            lastLessonId = lessonid;
+            if (lastLessonId == null) {
+                // Nếu không có cookie, bạn có thể đặt giá trị mặc định, ví dụ: bài học đầu tiên
+                //String lessonid = lessonidObj.toString();
+                lastLessonId = lessonid;
+            }
+
+            
+//            nếu tài khaonr này là mentor của khóa học 
+            if (checkMentorInLesson(acc.getAccount_id(), Integer.parseInt(courseid), dao)) {
+                response.sendRedirect("lesson?cid=" + courseid + "&lessonid=" + lastLessonId + "&createBy=" + createby);
+                response.getWriter().print("m là mentor");
+
+            } else if (isPaid(Integer.parseInt(courseid), listEnrollment)) {
+                response.sendRedirect("lesson?cid=" + courseid + "&lessonid=" + lastLessonId + "&createBy=" + createby);
+            }else {
+                response.sendRedirect("vnpay_pay.jsp?price="+ price + "&cid="+Integer.parseInt(courseid) +"&acc=" + acc.getAccount_id() +"&ndck="+ndck+"chuyen khoan");
+            }
+
+            //response.sendRedirect("lesson?cid="+ courseid +"&lessonid="+ lastLessonId +"&createBy="+createby);
+        } catch (SQLException ex) {
+            Logger.getLogger(dataTransferLessonServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
-        response.sendRedirect("lesson?cid="+ courseid +"&lessonid="+ lastLessonId +"&createBy="+createby);
 
     }
 
@@ -107,5 +137,27 @@ public class dataTransferLessonServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    //    kiểm tra xem có phải mentor dạy khóa học này hay không
+    private boolean checkMentorInLesson(int accountid, int courseId, LessonDAO dao) throws SQLException {
+        ArrayList<TeachingDTO> listmentor = dao.getListMentorByCid(courseId);
+        for (TeachingDTO teachingDTO : listmentor) {
+            if (teachingDTO.getMentorid() == accountid) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isPaid(int cid, ArrayList<Enrollment> enrollmentList) {
+        for (Enrollment e : enrollmentList) {
+            if (cid == e.getCourseid()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 }

@@ -20,6 +20,7 @@ import Model.Enrollment;
 import Model.LessonDTO;
 import Model.Quiz;
 import Model.StarRatingDTO;
+import Model.TeachingDTO;
 import Util.AVGOfRaing;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -124,7 +125,7 @@ public class lessonServlet extends HttpServlet {
                     }
                     // Nếu vẫn không có lessonid, đặt bài học đầu tiên là mặc định
                     if (lessonid_str == null) {
-                         ArrayList<LessonDTO> lessonList = dao.getListModulByCidd(course_id);
+                        ArrayList<LessonDTO> lessonList = dao.getListModulByCidd(course_id);
 
                         if (!lessonList.isEmpty()) {
                             lesson_id = lessonList.get(0).getLessonid();
@@ -136,30 +137,23 @@ public class lessonServlet extends HttpServlet {
                     lesson_id = Integer.parseInt(lessonid_str);
                 }
 
-                
-                
-                
                 ArrayList<Enrollment> listEnrollment = dao.getEnrollmentByAccountId(acc.getAccount_id());
 
+                
                 //Kiểm tra có phải người tạo ra khóa học hay không(Phân Quyền)
-                if (acc.getAccount_id() != createBy_id) {
+                if(!checkMentorInLesson(acc.getAccount_id(), course_id, dao)){
                     //Kiểm tra người dùng nếu chưa mua khóa học mà truy cập đường link thì chuyển về home       
                     if (!isPaid(course_id, listEnrollment)) {
                         response.sendRedirect("home");
                         return;
                     }
-
-
-                }
+            }
+                
                 ArrayList<LessonDTO> lessonList = dao.getListModulByCidd(course_id);
                 ArrayList<Model.ModuleDTO> moduleList = dao.getListModulByCid(course_id);
                 LessonDTO lesson = dao.getlessonByCid(course_id, lesson_id);
-                  
+                ArrayList<TeachingDTO> mentor_list = dao.getListMentorByCid(course_id);
 
-                
-                
-                
-                
 //                List all comment 
                 ArrayList<DiscussionLesson> allComments = discussDao.getCommentsByLesson(lesson_id);
 //              // Phân tách comments chính và các replies
@@ -190,7 +184,6 @@ public class lessonServlet extends HttpServlet {
 
                 //Lấy quiz theo module id
                 ArrayList<Quiz> quizLits = quizDao.findListQuizByCourseId(course_id);
-                
 
                 // Đặt các thuộc tính cho JSP
                 request.setAttribute("mainComments", mainComments);
@@ -198,6 +191,7 @@ public class lessonServlet extends HttpServlet {
 
 //                out.print(parentCommentid);
                 request.setAttribute("lesson", lesson);
+                request.setAttribute("mentorList", mentor_list);
                 request.setAttribute("moduleList", moduleList);
                 request.setAttribute("quizLits", quizLits);
                 request.setAttribute("lessonList", lessonList);
@@ -210,8 +204,6 @@ public class lessonServlet extends HttpServlet {
                 // Đặt đường dẫn của cookie để nó có hiệu lực trên toàn bộ trang web
                 lastLessonCookie.setPath("/");
                 response.addCookie(lastLessonCookie);
-                session.setAttribute("lastLessonId_"+course_id, lesson_id);
-
 
             } catch (SQLException ex) {
                 Logger.getLogger(lessonServlet.class.getName()).log(Level.SEVERE, null, ex);
@@ -288,7 +280,7 @@ public class lessonServlet extends HttpServlet {
         String createBy = request.getParameter("createBy");
         String comment = request.getParameter("content");
         String cid = request.getParameter("cid");
-        
+
         AccountDTO acc = (AccountDTO) session.getAttribute("account");
 
         String lession_id = request.getParameter("lessonid");
@@ -353,7 +345,6 @@ public class lessonServlet extends HttpServlet {
         long sumDuration = 0;
         try {
 
-
             ArrayList<LessonDTO> listLesson = dao.getListlessonByCid(course_id);
             for (LessonDTO lesson : listLesson) {
                 sumDuration += lesson.getDuration();
@@ -383,5 +374,16 @@ public class lessonServlet extends HttpServlet {
 
         }
     }
+    
+   private boolean checkMentorInLesson(int accountid, int courseId, LessonDAO dao) throws SQLException {
+       ArrayList<TeachingDTO> listmentor = dao.getListMentorByCid(courseId);
+       for (TeachingDTO teachingDTO : listmentor) {
+           if(teachingDTO.getMentorid() == accountid) {
+               return true;
+           }
+       }
+       
+       return false;
+   }
 
 }

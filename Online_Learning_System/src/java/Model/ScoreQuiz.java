@@ -39,7 +39,7 @@ public class ScoreQuiz {
     }
 
     public float getScore() {
-        return Score;
+        return (float)((int)(Score*100))/100;
     }
 
     public void setScore(float Score) {
@@ -51,6 +51,6 @@ public class ScoreQuiz {
         return "ScoreQuiz{" + "accountId=" + accountId + ", quizId=" + quizId + ", Score=" + Score + '}';
     }
     
-    
+
     
 }

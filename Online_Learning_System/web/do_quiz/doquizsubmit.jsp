@@ -159,7 +159,7 @@
     <body>
         <!-- Navbar Start -->
         <nav class="navbar navbar-expand-lg bg-white navbar-light shadow sticky-top p-0">
-            <a href="home" class="navbar-brand d-flex align-items-center px-4 px-lg-5" style="text-decoration: none; margin-right: 0px">
+            <a href="doquiz?mid=${quizDoQuiz.moduleId}&cid=${course.getCourse_id()}" class="navbar-brand d-flex align-items-center px-4 px-lg-5" id="backed" style="text-decoration: none; margin-right: 0px">
                 <h2 class="m-0 text-primary">Back</h2>
             </a>
             
@@ -175,7 +175,7 @@
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto p-4 p-lg-0">
-                    <a href="../Project_E-Learning/doquiz?mid=${quizDoQuiz.getModuleId()}" id="resetQuiz" class="nav-item nav-link">Reset</a>
+                   <a href="doquiz?mid=${quizDoQuiz.getModuleId()}&action=do_quiz&cid=${course.getCourse_id()}" id="resetQuiz" class="nav-item nav-link">Reset</a>
                     <span id="answeredCount" class="nav-item nav-link active">${countAnswer}</span>
                     <span class="nav-item nav-link active">/</span>
                     <span id="totalCount" class="nav-item nav-link active">${listQuestionsByMId.size()}</span> 
@@ -193,7 +193,7 @@
                         <c:forEach items="${listAnswerByMId}" var="answer">
                             <c:if test="${question.getQuestionId() == answer.getQuestionId()}">
                                 <li>
-                                    <input type="${question.isType() ? 'radio' : 'checkbox'}" 
+                                    <input type="${question.isType() ? 'checkbox' : 'radio'}" 
                                            id="${answer.getQuestionId()}${answer.getChoices()}" 
                                            name="${question.getQuestionId()}" 
                                            value="${answer.getChoices()}"
@@ -231,7 +231,16 @@
         </div>
 
         <script>
+            // Script to clear sessionStorage when the reset button is clicked
+            document.addEventListener('DOMContentLoaded', () => {
+                const resetButton = document.getElementById('resetQuiz');
 
+                resetButton.addEventListener('click', () => {
+                    sessionStorage.removeItem('quizTimeLeft');
+                    sessionStorage.removeItem('quizSubmitted');
+                    sessionStorage.clear();  // Clear all session storage if needed
+                });
+            });
         </script>
 
         <!-- JavaScript Libraries -->

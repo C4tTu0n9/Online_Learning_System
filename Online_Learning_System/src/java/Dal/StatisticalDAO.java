@@ -27,10 +27,10 @@ public class StatisticalDAO {
 
     public static void main(String[] args) {
         StatisticalDAO test = new StatisticalDAO();
-        System.out.println(test.getPaymentPerYear());
-        System.out.println(test.CountAccStillActive());
+//        System.out.println(test.getPaymentPerYear());
+//        System.out.println(test.CountAccStillActive());
         try {
-
+            System.out.println(test.getPercentCategory());
         } catch (Exception e) {
         }
     }
@@ -174,26 +174,25 @@ public class StatisticalDAO {
 
     public ArrayList<Category> getPercentCategory() throws SQLException {
         ArrayList<Category> list = new ArrayList<>();
-        String sql = "DECLARE @TotalCount INT;\n"
-                + "SELECT @TotalCount = COUNT(*)\n"
-                + "FROM [Project Online Learning].[dbo].[Course];\n"
-                + "\n"
-                + "\n"
-                + "SELECT \n"
-                + "    cc.[CourseCategoryId],\n"
-                + "    cc.[CategoryName],\n"
-                + "    ISNULL(COUNT(c.[CourseId]), 0) AS CategoryCount,\n"
-                + "    ISNULL(CAST(COUNT(c.[CourseId]) AS FLOAT) / @TotalCount * 100, 0) AS Percentage\n"
-                + "FROM \n"
-                + "    [Project Online Learning].[dbo].[CourseCategory] cc\n"
-                + "LEFT JOIN \n"
-                + "    [Project Online Learning].[dbo].[Course] c\n"
-                + "ON \n"
-                + "    cc.[CourseCategoryId] = c.[CourseCategoryId]\n"
-                + "GROUP BY \n"
-                + "    cc.[CourseCategoryId], cc.[CategoryName]\n"
-                + "ORDER BY \n"
-                + "    cc.[CourseCategoryId];";
+        String sql = "  DECLARE @TotalCount INT;\n" +
+"                SELECT @TotalCount = COUNT(*)\n" +
+"                FROM [Project Online Learning].[dbo].[Course];\n" +
+"               \n" +
+"                SELECT \n" +
+"                cc.[CourseCategoryId],\n" +
+"                  cc.[CategoryName],\n" +
+"                 ISNULL(COUNT(c.[CourseId]), 0) AS CategoryCount,\n" +
+"                  ISNULL(ROUND(CAST(COUNT(c.[CourseId]) AS FLOAT) / @TotalCount * 100, 2), 0) AS Percentage\n" +
+"               FROM \n" +
+"              [Project Online Learning].[dbo].[CourseCategory] cc\n" +
+"                LEFT JOIN \n" +
+"                  [Project Online Learning].[dbo].[Course] c\n" +
+"                ON \n" +
+"                  cc.[CourseCategoryId] = c.[CourseCategoryId]\n" +
+"               GROUP BY \n" +
+"                 cc.[CourseCategoryId], cc.[CategoryName]\n" +
+"               ORDER BY \n" +
+"                 cc.[CourseCategoryId];";
 
         try {
             con = new DBContext().getConnection();

@@ -90,10 +90,10 @@
     </head>
     <body>
         <jsp:include page="../common/menu.jsp"></jsp:include>
-        <div class="container">
-            <h1 class="page-heading h2" style="margin-top: 10px;">Create A New Quiz</h1>
-            <form id="addQuizForm" action="createquiz?moduleId=${this_module.moduleid}&cid=${requestScope.cidCourse}" method="post" onsubmit="return validateForm3(event)">
-            <div class="card">
+            <div class="container">
+                <h1 class="page-heading h2" style="margin-top: 10px;">Create A New Quiz</h1>
+                <form id="addQuizForm" action="createquiz?moduleId=${this_module.moduleid}&cid=${requestScope.cidCourse}" method="post" onsubmit="return validateForm3(event)">
+                <div class="card">
                     <div class="card-header">
                         <h4 class="card-title">Module: ${this_module.modulename}</h4>
                     </div>
@@ -182,36 +182,36 @@
 
         <!-- JavaScript for form validation -->
         <script>
-            function validateForm3(event) {
-                // Lấy các giá trị từ các trường input
-                let quizTitle = $('#quizTitle').val();
-                let timeNumber = $('#timeNumber').val();
-                let quizScore = $('#quizScore').val();
+                 function validateForm3(event) {
+                     // Lấy các giá trị từ các trường input
+                     let quizTitle = $('#quizTitle').val();
+                     let timeNumber = $('#timeNumber').val();
+                     let quizScore = $('#quizScore').val();
 
-                // Clear current error messages
-                $('.error').html('');
+                     // Clear current error messages
+                     $('.error').html('');
 
-                // Check if fields are empty and show error messages
-                if (quizTitle === '') {
-                    $('#quizTitleError').html('Title Can Not Be Empty');
-                }
-                if (timeNumber === '') {
-                    $('#timeNumberError').html('Time Frame Of Quiz Can Not Be Empty');
-                }
-                if (quizScore === '') {
-                    $('#quizScoreError').html('Score Of Quiz Can Not Be Empty');
-                }
+                     // Check if fields are empty and show error messages
+                     if (quizTitle === '') {
+                         $('#quizTitleError').html('Title Can Not Be Empty');
+                     }
+                     if (timeNumber === '') {
+                         $('#timeNumberError').html('Time Frame Of Quiz Can Not Be Empty');
+                     }
+                     if (quizScore === '') {
+                         $('#quizScoreError').html('Score Of Quiz Can Not Be Empty');
+                     }
 
-                let error = '';
-                $('.error').each(function () {
-                    error += $(this).html();
-                });
-                if (error === '') {
-                    $('#addQuizForm').submit();
-                } else {
-                    event.preventDefault();
-                }
-            }
+                     let error = '';
+                     $('.error').each(function () {
+                         error += $(this).html();
+                     });
+                     if (error === '') {
+                         $('#addQuizForm').submit();
+                     } else {
+                         event.preventDefault();
+                     }
+                 }
         </script>
     </body>
 </html>

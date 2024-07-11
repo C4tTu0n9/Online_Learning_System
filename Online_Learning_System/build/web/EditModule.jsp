@@ -5,6 +5,7 @@
 --%>
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -120,8 +121,13 @@
 
             <div class="container-fluid">
                 <div class="container py-5">
+                        <div class="col-2">
+                            <a href="course-manage" class="fas fa-angle-left" >
+                                Course Manage
+                            </a>
+                        </div>
                     <div class="row">
-                        <div class="col-lg-10">
+                        <div class="col-10">
                             <h5 class="display-6 text-dark">${my_managed_course.course_name}</h5>
                     </div>
                 </div>
@@ -136,6 +142,7 @@
                             <div class="list-group list-group-flush account-settings-links" id="moduleList">
                                 <a class="list-group-item list-group-item-action" href="course-manage?cid=${cid}&action=update"">Edit Course Information</a>
                                 <h5>Modules</h5>
+
                                 <c:forEach items="${list_module}" var="module">
                                     <a class="list-group-item list-group-item-action" href="ModuleManage?moduleId=${module.moduleid}&cid=${my_managed_course.course_id}" data-module-id="${module.moduleid}">${module.modulename}</a>
                                 </c:forEach>
@@ -150,11 +157,13 @@
                                     <div style="display: flex; justify-content: space-between; align-items: center;">
                                         <div>
                                             <a href="LessonManage?action=addlesson&cid=${cid}&moduleid=${module_id}" class="btn btn-outline-success">Add New Lesson</a>
-                                            <a href="createquiz?action=addQuiz&cid=${cid}&moduleid=${module_id}" class="btn btn-outline-primary">Add New Quiz</a>
+                                            <c:if test="${quiz_exist  != 1}">
+                                                <a href="createquiz?action=addQuiz&cid=${cid}&moduleid=${module_id}" class="btn btn-outline-primary">Add New Quiz</a>
+                                            </c:if>
                                         </div>
                                         <div>
-                                            <form action="ModuleManage?action=delete&cid=${cid}&moduleId=${module_id}" method="post">
-                                                <input type="submit" class="btn btn-outline-danger" value="Delete Module">
+                                            <form id="deleteForm" action="ModuleManage?action=delete&cid=${cid}&moduleId=${module_id}" method="post">
+                                                <input type="submit" class="btn btn-outline-danger" value="Delete Module" onclick="confirmDelete(event, ${fn:length(list_lesson_in_module)}, ${quiz_exist == 1? quiz_exist : 0 })">
                                             </form>
                                         </div>
                                     </div>
@@ -175,7 +184,7 @@
                                             </c:forEach>
                                         </div>
                                         <div class="card-body pb-2">
-                                            <h5>Lesson</h5>
+                                            <h5>Lesson(Number: ${fn:length(list_lesson_in_module)})</h5>
                                             <c:forEach items="${list_lesson_in_module}" var="lesson">
                                                 <div id="course-${lesson.lessonname}" class="row card-body media align-items-center" style="border: 1px solid #ced4da;">
                                                     <div class="col-lg-2">
@@ -202,27 +211,25 @@
                                             <br>
                                             <hr class="border-light m-0">
                                         </div>
+
                                         <div class="card-body pb-2">
                                             <h5>Quiz</h5>
                                             <c:forEach items="${requestScope.list_quiz_by_moduleId}" var="quiz">
                                                 <div class="row card-body media align-items-center" style="border: 1px solid #ced4da;">
                                                     <div class="col-lg-2">
                                                         <div class="embed-responsive embed-responsive-16by9">
-                                                            <iframe  id="videoFrame" class="embed-responsive-item" src="${lesson.lessonvideo}"  width="100%" height="auto" allowfullscreen=""></iframe>
+                                                            <iframe id="videoFrame" class="embed-responsive-item" src="${lesson.lessonvideo}" width="100%" height="auto" allowfullscreen=""></iframe>
                                                         </div>
                                                     </div>
                                                     <div class="col-lg-8">
-                                                        <label class="form-label" style="color: black; font-size: 20px">Quiz Name: ${quiz.quizName}</label><br>                                                        
+                                                        <label class="form-label" style="color: black; font-size: 20px">Quiz Name: ${quiz.quizName}</label><br>
                                                         <label class="form-label" style="color: #000; font-size: 15px ">Quiz Time: ${quiz.quizTime}</label><br>
-                                                        <label class="form-label" style="color: #000; font-size: 15px ">Pass Score: ${quiz.passScore}</label><br>                                               
+                                                        <label class="form-label" style="color: #000; font-size: 15px ">Pass Score: ${quiz.passScore}</label><br>
                                                     </div>
                                                     <div class="col-lg-2">
-                                                        <a href="#" class="btn btn-outline-success" style="padding-right: 6px">Update Quiz</a>
-
-                                                        <a class="btn btn-outline-danger" style="margin-top: 2px;" data-toggle="modal" data-target="#delete-lessson-modal" >Delete Quiz</a>
-
-                                                    </div>
-                                                </div>                                        
+                                                        <a href="editquiz?cid=${cid}&moduleId=${module_id}&quizId=${quiz.quizId}" class="btn btn-outline-success" style="padding-right: 6px">Update Quiz</a>
+                                                        <a onclick="deleteQuizModal(${quiz.quizId}, ${cid}, ${module_id})" class="btn btn-outline-danger" style="margin-top: 2px;" data-toggle="modal" data-target="#delete-quiz-modal">Delete Quiz</a>                                        </div>
+                                                </div>
                                             </c:forEach>
                                             <br>
                                             <hr class="border-light m-0">
@@ -268,6 +275,35 @@
             </div>
         </div>
 
+        <!--Form delete-->
+        <div class="modal fade" id="delete-quiz-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h5 class="modal-title" id="delete-modal-label">Delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Are you sure you want to delete this Quiz?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <form action="deletequiz" method="POST">
+                            <div class="form-group" style="display: none">
+                                <input type="hidden" class="form-control" id="idQuizInput" name="quizIdSelect">
+                                <input type="hidden" class="form-control"  name="courseId" value="${cid}">
+                                <input type="hidden" class="form-control" name="moduleId" value="${module_id}">
+                            </div>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                            <button type="submit" class="btn btn-danger">Yes</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
 
         <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -287,6 +323,20 @@
                 inputModuleId.value = moduleId;
             }
 
+
+            function deleteQuizModal(quizId, courseId, moduleId) {
+                document.getElementById("idQuizInput").value = quizId;
+                document.querySelector('input[name="courseId"]').value = courseId;
+                document.querySelector('input[name="moduleId"]').value = moduleId;
+            }
+
+            function confirmDelete(event, lesson_number, quiz_number) {
+                if (!confirm("Are you sure you want to delete this module?\n\
+Lesson number: " + lesson_number + "\n\
+Quiz number: " + quiz_number)) {
+                    event.preventDefault(); // Ngăn không cho form gửi đi
+                }
+            }
         </script>
 
 

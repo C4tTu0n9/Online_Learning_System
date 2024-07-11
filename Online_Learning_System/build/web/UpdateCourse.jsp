@@ -130,9 +130,20 @@
 
             <div class="container-fluid">
                 <div class="container py-5">
-                    <div class="row">
-                        <div class="col-lg-10">
-                            <h6 href="" class="display-6 text-dark animated slideInDown">${my_managed_course.course_name}</h6>
+                    <div class="col-2 h6">
+                        <a href="course-manage" class="fas fa-angle-left">
+                            Course Manage
+                        </a>
+                    </div>
+                <c:if test="${not empty successMessage}">
+                    <div class="alert alert-success">
+                        ${successMessage}
+                    </div>
+                    <% session.removeAttribute("successMessage"); %>
+                </c:if>
+                <div class="row">
+                    <div class="col-10">
+                        <h6 href="" class="display-6 text-dark animated slideInDown">${my_managed_course.course_name}</h6>
                     </div>
 
                 </div>
@@ -148,7 +159,7 @@
                                 <c:forEach items="${list_module}" var="module">
                                     <a class="list-group-item list-group-item-action" href="ModuleManage?moduleId=${module.moduleid}&cid=${my_managed_course.course_id}" data-module-id="${module.moduleid}">${module.modulename}</a>
                                 </c:forEach>
-                                    <a class="btn btn-outline-primary" href="course-manage?action=add_module&cid=${my_managed_course.course_id}">Add New Module</a>
+                                <a class="btn btn-outline-primary" href="course-manage?action=add_module&cid=${my_managed_course.course_id}">Add New Module</a>
                             </div>
                         </div>
 
@@ -182,11 +193,12 @@
                                             </div>
                                             <div class="form-group" style="width: 15%">
                                                 <label class="form-label">Price</label>
-                                                <input name="price" type="number" min="0" max="999999999" class="form-control" value="${requestScope.my_managed_course.price}">
+                                                <input name="price" type="number" min="0" max="9999999" class="form-control" value="${requestScope.my_managed_course.price}">
                                             </div>
-                                            <div class="form-group" style="width: 10%">
+                                            <div hidden="" class="form-group" style="width: 10%">
                                                 <label class="form-label">Discount</label>
-                                                <input name="discount" type="number" min="0" max="100" class="form-control" value="${requestScope.my_managed_course.discount}"%">
+                                                <!--<input name="discount" type="number" min="0" max="100" class="form-control" value="${requestScope.my_managed_course.discount}"%">-->
+                                                <input name="discount" type="number" min="0" max="100" class="form-control" value="0"%">
                                             </div>
                                             <div class="form-group">
                                                 ${requestScope.my_managed_course.course_category_id}
@@ -200,34 +212,41 @@
                                                     </c:forEach>
                                                 </select>
                                             </div>
-                                            <div class="form-group">
-                                                <label class="form-label">Assign Mentor</label><br>
-                                                <input id="mentorSearch" class="search-input" type="text" name="search" placeholder="Search Mentor"><br>
-                                                <div id="mentorListContainer">
-                                                    <table class="table table-bordered" id="mentorList">
-                                                        <thead>
-                                                            <tr>
-                                                                <th>Select</th>
-                                                                <th>Name</th>
-                                                                <th>Email</th>
-                                                            </tr>
-                                                        </thead>
-                                                        <tbody>
-                                                            <c:forEach items="${list_mentor_by_courseId}" var="mentor" varStatus="status">
-                                                                <tr class="mentor-item" data-name="${mentor.fullname}" data-email="${mentor.email}">
-                                                                    <td><input <c:if test="${mentor.teaching_course == my_managed_course.course_id}">checked=""</c:if> type="checkbox" name="mentors" value="${mentor.profile_id}"></td>
-                                                                    <td>${mentor.fullname}</td>
-                                                                    <td>${mentor.email}</td>
+                                            <c:if test="${my_role == 2}">
+                                                <div class="form-group">
+                                                    <label class="form-label">Assign Mentor</label><br>
+                                                    <input id="mentorSearch" class="search-input" type="text" name="search" placeholder="Search Mentor"><br>
+                                                    <div id="mentorListContainer">
+                                                        <table class="table table-bordered" id="mentorList">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Select</th>
+                                                                    <th>Name</th>
+                                                                    <th>Email</th>
                                                                 </tr>
-                                                            </c:forEach>
-                                                        </tbody>
-                                                    </table>
+                                                            </thead>
+                                                            <tbody>
+                                                                <c:forEach items="${list_mentor_by_courseId}" var="mentor" varStatus="status">
+                                                                    <tr class="mentor-item" data-name="${mentor.fullname}" data-email="${mentor.email}">
+                                                                        <td><input <c:if test="${mentor.teaching_course == my_managed_course.course_id}">checked=""</c:if> type="checkbox" name="mentors" value="${mentor.profile_id}"></td>
+                                                                        <td>${mentor.fullname}</td>
+                                                                        <td>${mentor.email}</td>
+                                                                    </tr>
+                                                                </c:forEach>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                            </c:if>
                                             <br>
+
+
+                                            <!-- Form fields here -->
                                             <div class="form-group" style="text-align: right;">
                                                 <button type="submit" class="btn btn-outline-primary">Save Change</button>
                                             </div>
+
+
                                         </div>
                                     </form>
                                 </div>
@@ -243,6 +262,15 @@
             <script type="text/javascript">
             </script>
             <script>
+                document.addEventListener('DOMContentLoaded', function () {
+                    var form = document.getElementById('updateCourseForm');
+                    form.addEventListener('submit', function (event) {
+                        event.preventDefault(); // Prevent the form from submitting immediately
+                        if (confirm('Are you sure you want to save these changes?')) {
+                            this.submit(); // If user confirms, submit the form
+                        }
+                    });
+                });
                 document.addEventListener('DOMContentLoaded', function () {
                     function autoResize(textarea) {
                         textarea.style.height = 'auto';

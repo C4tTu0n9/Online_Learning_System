@@ -75,15 +75,57 @@ public class ModuleDAO extends DBContext {
         }
     }
 
-    public void deleteModule(ModuleDTO module) {
+    public void deleteModule(int module_id) {
         connection = getConnection();
         String sql = """
-                      delete Module
+                     delete AnswerQuestion
+                       where QuestionId in
+                       (select qt.QuestionId from Question qt 
+                       join Quiz qz on qt.QuizId = qz.QuizId
+                       join Module m on qz.ModuleId = m.ModuleId
+                       where m.ModuleId = ?
+                       )
+                     
+                       delete QuestionChoices
+                       where QuestionId in 
+                       (select qt.QuestionId from Question qt 
+                       join Quiz qz on qt.QuizId = qz.QuizId
+                       join Module m on qz.ModuleId = m.ModuleId
+                       where m.ModuleId = ?
+                       )
+                     
+                       delete Question
+                       where QuizId in (select q.QuizId from Quiz q join Module m  on q.ModuleId = m.ModuleId where m.ModuleId = ?)
+                       
+                       delete from ScoreQuiz
+                       where QuizId in (select q.QuizId from Quiz q join Module m  on q.ModuleId = m.ModuleId where m.ModuleId = ?)
+                     
+                       delete Quiz
                        where ModuleId = ?
-                     """;
+                     
+                       delete DiscussionLesson
+                       where LessonId in (
+                       select l.LessonId from Lesson l
+                       join Module m on
+                       l.ModuleId = m.ModuleId
+                       where m.ModuleId = ?
+                       )
+                     
+                       delete Lesson
+                       where ModuleId = ?
+                     
+                       delete from Module
+                       where ModuleId = ?""";
         try {
             statement = connection.prepareStatement(sql);
-            statement.setInt(1, module.getModuleid());
+            statement.setInt(1, module_id);
+            statement.setInt(2, module_id);
+            statement.setInt(3, module_id);
+            statement.setInt(4, module_id);
+            statement.setInt(5, module_id);
+            statement.setInt(6, module_id);
+            statement.setInt(7, module_id);
+            statement.setInt(8, module_id);
             statement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();
@@ -116,6 +158,34 @@ public class ModuleDAO extends DBContext {
                 String modulename = resultSet.getString("ModuleName");
                 int module_number = resultSet.getInt("ModuleNumber");
                 ModuleDTO this_module = new ModuleDTO(moduleid, modulename, module_number);
+                return this_module;
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
+    public ModuleDTO getModuleInserted(String cid, String module_number) {
+        connection = getConnection();
+        String sql = """
+                    SELECT [ModuleId]
+                                                  ,[ModuleName]
+                                                  ,[CourseId]
+                                                  ,[ModuleNumber]
+                                              FROM [dbo].[Module]
+                                              where CourseId = ? and ModuleNumber = ?""";
+        try {
+            connection = new DBContext().getConnection();
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, cid);
+            statement.setString(2, module_number);
+            resultSet = statement.executeQuery();
+            // trả về kết quả
+            while (resultSet.next()) {
+                int moduleid = resultSet.getInt("ModuleId");
+                String modulename = resultSet.getString("ModuleName");
+                ModuleDTO this_module = new ModuleDTO(moduleid, modulename, Integer.parseInt(module_number));
                 return this_module;
             }
         } catch (SQLException e) {

@@ -94,6 +94,10 @@
     background-color: #c3e6cb; /* Màu nền cho quiz đã hoàn thành */
     text-decoration: line-through; /* Gạch ngang quiz đã hoàn thành */
 }
+.scrollable-mentor-list {
+    max-height: 80px; /* Đặt chiều cao tối đa cho phần tử */
+    overflow-y: auto; /* Cho phép cuộn theo chiều dọc */
+}
 
     </style>
 
@@ -299,11 +303,11 @@
                                                                         </div>-->
                                 </div>
 
-                                <div class="child-hai">
+                                <div class="child-hai">  
+                                    <c:set var="index" value="1" /> <!-- Tăng biến đếm -->
                                     <c:forEach items="${moduleList}" var="o" varStatus="status">
-
+                                     
                                         <div class="dev" >
-
                                             <div style="background-color: #edeff1" class="block-header block-header-default">
                                                 <h3 class="block-title font-w800 text-black ">${status.index + 1}. ${o.getModulename()}</h3>
 
@@ -313,19 +317,19 @@
                                                     </button>
                                                 </div>
                                             </div>
-                                            <c:forEach items="${lessonList}" var="i" varStatus="status">
-                                                <div class="module-content">
-                                                 <c:set var="itemIndex" value="${itemIndex + 1}" /> <!-- Tăng biến đếm -->
+                                            <c:forEach items="${lessonList}" var="i">
+                                                <div class="module-content">     
                                                     <c:if test="${o.getModulename() == i.getModulname()}">
                                                         <a style="color: black" href="lesson?cid=${i.getCourseid()}&lessonid=${i.getLessonid()}&createBy=${i.getCreateby()}" class="btn btn-block btn--col module-lesson" data-lessonid="${i.getLessonid()}">
-                                                          ${i.getLessonname()} 
+                                                         ${index}. ${i.getLessonname()} 
                                                             <div>
                                                                 <small class="text-muted module-lesson" style="color: black">${ YoutubeDuration.convertToMinutesAndSeconds(i.getDuration())}</small>
                                                             </div>
                                                         </a> 
+                                                         <c:set var="index" value="${index + 1}" />
                                                     </c:if>
 
-
+                                               
                                                 </div>
                                             </c:forEach>
                                                 
@@ -333,12 +337,13 @@
                                             <c:forEach items="${quizLits}" var="j" varStatus="status">
                                                 <div class="module-content">
                                                     <c:if test="${o.getModuleid() == j.getModuleId()}">
-                                                        <a style="color: black"  class="btn btn-block btn--col module-lesson"  data-quizid="${j.getQuizId()}"  href="doquiz?mid=${j.getModuleId()}"> 
-                                                            ${j.getQuizName()}
+                                                        <a style="color: black"  class="btn btn-block btn--col module-lesson"  data-quizid="${j.getQuizId()}"  href="doquiz?mid=${j.getModuleId()}&cid=${j.course_id}"> 
+                                                            ${index}. ${j.getQuizName()}
                                                             <div>
                                                                 <small class="text-muted module-lesson" style="color: black">Do quiz</small>
                                                             </div>
                                                         </a>
+                                                        <c:set var="index" value="${index + 1}" />
                                                     </c:if>
                                                 </div>
                                             </c:forEach>   
@@ -349,25 +354,26 @@
 
                             </div>
                         </div>
-                        <div class="card">
+                        
+                         <div class="card">
+                           <div class="card-header bg-white scrollable-mentor-list"> 
+                               <c:forEach items="${mentorList}" var="o">
                             <div class="card-header bg-white">
+                               
                                 <div class="media">
                                     <div class="media-left media-middle">
-                                        <img src="${lesson.getAvatar()}" alt="About Adrian" class="rounded-circle">
+                                        <img src="${o.getAvatar()}"  class="rounded-circle">
                                     </div>
                                     <div class="media-body media-middle">
-                                        <h4 class="card-title"><a href="#">${lesson.getMentorname()}</a></h4>
+                                        <h4 class="card-title"><a href="#">${o.getFullname()}</a></h4>
                                         <p class="card-subtitle">Instructor</p>
                                     </div>
-                                    <a class="buttons" href="messenger?sender_id=${sessionScope.account.getAccount_id()}&receiver_id=${lesson.getProfile_id()}">Chat Now</a>
+                                    <a class="buttons" href="messenger?sender_id=${sessionScope.account.getAccount_id()}&receiver_id=${o.getProfileid()}">Chat Now</a>
                                 </div>
+                              
                             </div>
-                            <!--                            <div class="card-body">
-                                                            <p>Having over 12 years exp. Adrian is one of the lead UI designers in the industry Lorem ipsum dolor sit amet, consectetur adipisicing elit. Facere, aut.</p>
-                                                            <a href="#" class="btn btn-default"><i class="fa fa-facebook"></i></a>
-                                                            <a href="#" class="btn btn-default"><i class="fa fa-twitter"></i></a>
-                                                            <a href="#" class="btn btn-default"><i class="fa fa-github"></i></a>
-                                                        </div>-->
+                              </c:forEach>
+                            </div>
                         </div>
 
                         <div class="card">

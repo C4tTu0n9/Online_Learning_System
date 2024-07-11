@@ -147,11 +147,12 @@
                                             </div>
                                             <div class="form-group" style="width: 15%">
                                                 <label class="form-label">Price</label>
-                                                <input name="price" type="number" min="0" max="999999999" class="form-control" value="${requestScope.price}">
+                                                <input name="price" type="number" min="0" max="9999999" class="form-control" value="${requestScope.price}">
                                             </div>
-                                            <div class="form-group" style="width: 5%">
+                                            <div hidden="" class="form-group" style="width: 5%">
                                                 <label class="form-label">Discount</label>
-                                                <input name="discount" type="number" min="0" max="100" class="form-control" value="${requestScope.discount}"%">
+                                                <!--<input name="discount" type="number" min="0" max="100" class="form-control" value="${requestScope.discount}"%">-->
+                                                <input name="discount" type="number" min="0" max="100" class="form-control" value="0"%">
                                             </div>
                                             <div class="form-group">
                                                 <h3 style="color: red">${requestScope.error_category}</h3>

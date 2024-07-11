@@ -167,8 +167,8 @@
                     </c:forEach>
                     <div class="card-header bg-white buttons-container">
                         <a href="#" data-toggle="modal" data-target="#createQuestion" class="btn btn-success">Add Question</a>
-<!--                        <a href="ModuleManage?moduleId=${midCancel}&cid=${cidCancel}" class="btn btn-danger">Cancel</a>-->
-                    <a href="javascript:window.history.go(-2);"class="btn btn-danger">Cancel</a>
+                        <a href="../Project_E-Learning/ModuleManage?moduleId=${midCreate}&cid=${cidCreate}" class="btn btn-danger">Cancel</a>
+                   
                     </div>
                 </div>
             </form>

@@ -30,49 +30,48 @@ public class CourseDetailDAO {
     public ArrayList<Course> getRelateCourse(int courseId) throws SQLException {
         ArrayList<Course> list = new ArrayList<>();
         String sql = """
-                       SELECT TOP 4
-                         cr.[CourseId],
-                         cr.[CourseName],
-                         cr.[Description],
-                         cr.[Image],
-                         cr.[Price],
-                         cr.[CourseCategoryId],
-                         cr.[CreatedBy],
-                         cr.[DateCreated],
-                         cr.[StudyTime],
-                         cr.[Status],
-                         pro.[FullName] AS MentorName,
-                         COUNT(e.EnrollmentId) AS StudentCount,
-                     	                     	(
-                                                  SELECT TOP 1 L.LessonId
-                                                  FROM Module M
-                                                  INNER JOIN Lesson L ON M.ModuleId = L.ModuleId
-                                                  WHERE M.CourseId = Cr.CourseId
-                                                  ORDER BY L.LessonId
-                                              ) AS FirstLessonId
-                     
-                     FROM
-                         [dbo].[Course] cr
-                         JOIN [dbo].[Teaching] te ON te.CourseId = cr.CourseId
-                         JOIN [dbo].[Profile] pro ON pro.ProfileId = te.MentorId
-                         LEFT JOIN [dbo].[Enrollment] e ON cr.CourseId = e.CourseId
-                     WHERE
-                         cr.[CourseCategoryId] = (SELECT [CourseCategoryId] FROM [dbo].[Course] WHERE [CourseId] = ?) 
-                         AND cr.[CourseId] != ?
-                     GROUP BY
-                         cr.[CourseId],
-                         cr.[CourseName],
-                         cr.[Description],
-                         cr.[Image],
-                         cr.[Price],
-                         cr.[CourseCategoryId],
-                         cr.[CreatedBy],
-                         cr.[DateCreated],
-                         cr.[StudyTime],
-                         cr.[Status],
-                         pro.[FullName]
-                     ORDER BY
-                         StudentCount DESC;""";
+   SELECT TOP 4
+                                                cr.[CourseId],
+                                                cr.[CourseName],
+                                                cr.[Description],
+                                                cr.[Image],
+                                                cr.[Price],
+                                                cr.[CourseCategoryId],
+                                                cr.[CreatedBy],
+                                                cr.[DateCreated],
+                                                cr.[StudyTime],
+                                                cr.[Status],
+                                                pro.[FullName] AS MentorName,
+                                                COUNT(e.EnrollmentId) AS StudentCount,
+                                            	                     	(
+                                                                         SELECT TOP 1 L.LessonId
+                                                                         FROM Module M
+                                                                         INNER JOIN Lesson L ON M.ModuleId = L.ModuleId
+                                                                         WHERE M.CourseId = Cr.CourseId
+                                                                         ORDER BY L.LessonId
+                                                                     ) AS FirstLessonId
+                                            
+                                            FROM
+                                                [dbo].[Course] cr
+                                                JOIN [dbo].[Profile] pro ON pro.ProfileId = cr.CreatedBy
+                                                LEFT JOIN [dbo].[Enrollment] e ON cr.CourseId = e.CourseId
+                                            WHERE
+                                                cr.[CourseCategoryId] = (SELECT [CourseCategoryId] FROM [dbo].[Course] WHERE [CourseId] = ?) 
+                                                AND cr.[CourseId] != ?
+                                            GROUP BY
+                                                cr.[CourseId],
+                                                cr.[CourseName],
+                                                cr.[Description],
+                                                cr.[Image],
+                                                cr.[Price],
+                                                cr.[CourseCategoryId],
+                                                cr.[CreatedBy],
+                                                cr.[DateCreated],
+                                                cr.[StudyTime],
+                                                cr.[Status],
+                                                pro.[FullName]
+                                            ORDER BY
+                                                StudentCount DESC;""";
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(sql);
@@ -172,34 +171,33 @@ public class CourseDetailDAO {
     public Course getCourseById(int courseId) throws SQLException {
 
         String sql = """
-                     SELECT cr.[CourseId],
-                            cr.[CourseName],
-                            cr.[Image],
-                            cr.[Price],
-                            cr.[CourseCategoryId],
-                            cr.[CreatedBy],
-                            cr.[DateCreated],
-                            cr.[StudyTime],
-                            cr.[Status],
-                            pro.FullName,
-                     	   Count(l.LessonId) as lecture
-                     	   
-                     FROM [dbo].[Course] cr
-                     JOIN [dbo].[Teaching] te ON te.CourseId = cr.CourseId
-                     JOIN [dbo].[Profile] pro ON pro.ProfileId = te.MentorId
-                     Left Join [dbo].[Module] m on m.CourseId = cr.CourseId
-                     Left Join [dbo].[Lesson] l on l.ModuleId = m.ModuleId
-                     WHERE cr.[CourseId] = ?
-                     Group by cr.[CourseId],
-                            cr.[CourseName],
-                            cr.[Image],
-                            cr.[Price],
-                            cr.[CourseCategoryId],
-                            cr.[CreatedBy],
-                            cr.[DateCreated],
-                            cr.[StudyTime],
-                            cr.[Status],
-                            pro.FullName""";
+                       SELECT cr.[CourseId],
+                                                        cr.[CourseName],
+                                                        cr.[Image],
+                                                        cr.[Price],
+                                                        cr.[CourseCategoryId],
+                                                        cr.[CreatedBy],
+                                                        cr.[DateCreated],
+                                                        cr.[StudyTime],
+                                                        cr.[Status],
+                                                        pro.FullName,
+                                                 	   Count(l.LessonId) as lecture
+                                                 	   
+                                                 FROM [dbo].[Course] cr
+                                                 JOIN [dbo].[Profile] pro ON pro.ProfileId = cr.CreatedBy
+                                                 Left Join [dbo].[Module] m on m.CourseId = cr.CourseId
+                                                 Left Join [dbo].[Lesson] l on l.ModuleId = m.ModuleId
+                                                 WHERE cr.[CourseId] = ?
+                                                 Group by cr.[CourseId],
+                                                        cr.[CourseName],
+                                                        cr.[Image],
+                                                        cr.[Price],
+                                                        cr.[CourseCategoryId],
+                                                        cr.[CreatedBy],
+                                                        cr.[DateCreated],
+                                                        cr.[StudyTime],
+                                                        cr.[Status],
+                                                        pro.FullName""";
 
         try {
             con = new DBContext().getConnection();

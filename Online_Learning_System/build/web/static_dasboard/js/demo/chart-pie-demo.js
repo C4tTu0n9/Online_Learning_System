@@ -27,11 +27,17 @@ var myPieChart = new Chart(ctx, {
       yPadding: 15,
       displayColors: false,
       caretPadding: 10,
+          label: function(tooltipItem, data) {
+            var dataset = data.datasets[tooltipItem.datasetIndex];
+            var currentValue = dataset.data[tooltipItem.index];
+            return currentValue + '%';
+          }
     },
     legend: {
       display: false
     },
     cutoutPercentage: 80,
+    
   },
 });
 }

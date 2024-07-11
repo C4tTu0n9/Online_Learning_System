@@ -19,6 +19,7 @@ public class Payment {
     private String paymentmethodid;
     private int amount;
     private String paymentDateString;
+    private String formattedPrice;
 
     public Payment() {
     }
@@ -31,8 +32,8 @@ public class Payment {
         this.paymentmethodid = paymentmethodid;
         this.amount = amount;
     }
-    
-        public Payment( int accountid, int courseid, Date paymentDate, String paymentmethodid, int amount) {
+
+    public Payment(int accountid, int courseid, Date paymentDate, String paymentmethodid, int amount) {
         this.accountid = accountid;
         this.courseid = courseid;
         this.paymentDate = paymentDate;
@@ -44,11 +45,6 @@ public class Payment {
         this.amount = amount;
         this.paymentDateString = paymentDateString;
     }
-
-
-    
-
-  
 
     public int getPaymentid() {
         return paymentid;
@@ -106,16 +102,17 @@ public class Payment {
         this.paymentDateString = paymentDateString;
     }
 
+    public String getFormattedPrice() {
+        return formattedPrice;
+    }
+
+    public void setFormattedPrice(String formattedPrice) {
+        this.formattedPrice = formattedPrice;
+    }
+
     @Override
     public String toString() {
         return "Payment{" + "amount=" + amount + ", paymentDateString=" + paymentDateString + '}';
     }
-
-  
-
-  
-
-    
-    
 
 }

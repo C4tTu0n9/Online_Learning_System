@@ -73,14 +73,17 @@
                     </a>
                     <div class="dropdown-menu fade-down m-0">
                         <a class="dropdown-item" href="profile">My Profile</a>
-                        <c:if test="${sessionScope.account.role_id == 2 || sessionScope.account.role_id == 3}">
+                        <c:if test="${sessionScope.account.role_id == 2}">
                             <a class="dropdown-item" href="course-manage">Manager</a>
+                        </c:if>
+                        <c:if test="${sessionScope.account.role_id == 3}">
+                            <a class="dropdown-item" href="course-manage">Course Teaching</a>
                         </c:if>
                         <c:if test="${sessionScope.account.role_id == 3}">
                             <a class="dropdown-item" href="messenger?sender_id=${sessionScope.account.getAccount_id()}&receiver_id=0">Messenger</a>
                         </c:if>
                              <a class="dropdown-item" href="certificate">My Certificate</a>
-                        <a class="dropdown-item" href="my-courses">My Courses</a>
+                        <a class="dropdown-item" href="my-courses">My Learning</a>
                         <a class="dropdown-item" href="join?action=logout">Log Out</a>
                     </div>
                 </div>

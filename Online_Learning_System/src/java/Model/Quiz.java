@@ -15,6 +15,7 @@ public class Quiz {
     private String quizName;
     private Time quizTime;
     private int passScore;
+    private int course_id;
 
     public Quiz() {
     }
@@ -36,6 +37,15 @@ public class Quiz {
         this.passScore = passScore;
     }
 
+    public Quiz(int quizId, int moduleId ,String quizName, Time quizTime, int passScore, int course_id) {
+        this.quizId = quizId;
+        this.moduleId = moduleId;
+        this.quizName = quizName;
+        this.quizTime = quizTime;
+        this.passScore = passScore;
+        this.course_id = course_id;
+    }
+
 
     
 
@@ -50,6 +60,14 @@ public class Quiz {
         this.quizName = quizName;
         this.quizTime = quizTime;
         this.passScore = passScore;
+    }
+
+    public int getCourse_id() {
+        return course_id;
+    }
+
+    public void setCourse_id(int course_id) {
+        this.course_id = course_id;
     }
     
     

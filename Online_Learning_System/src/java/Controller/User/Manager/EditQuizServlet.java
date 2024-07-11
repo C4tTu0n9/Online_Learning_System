@@ -26,6 +26,8 @@ import java.util.Calendar;
  */
 public class EditQuizServlet extends HttpServlet {
 
+            QuizDAO quizDAO = new QuizDAO();
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -48,8 +50,8 @@ public class EditQuizServlet extends HttpServlet {
         request.setAttribute("quizEdit", quizEdit);
         request.setAttribute("moduleOfQuizEdit", moduleOfQuizEdit);
         request.getRequestDispatcher("edit_quiz/editquiz.jsp").forward(request, response);
-    }
-
+        }
+        
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -63,6 +65,7 @@ public class EditQuizServlet extends HttpServlet {
             throws ServletException, IOException {
         int mid = Integer.parseInt(request.getParameter("moduleId"));
         int quizId = Integer.parseInt(request.getParameter("quizId"));
+        int cid = Integer.parseInt(request.getParameter("cid1"));
         String quizTitle = request.getParameter("quizTitle");
         String timeNumber = request.getParameter("timeNumber");
         String timeUnit = request.getParameter("timeUnit");
@@ -94,15 +97,16 @@ public class EditQuizServlet extends HttpServlet {
                 e.printStackTrace();
             }
         }
-       
+        
         if (quizTime != null) {
             QuizDAO quizDAO = new QuizDAO();
             quizDAO.editQuizByQuizId( new Quiz( quizId,mid, quizTitle, quizTime, quizScore));
         }
         
         //=============================================THỰC HIỆN CHUYỂN HƯỚNG Ở ĐÂY======================================================
-        request.getRequestDispatcher("ModuleManage?moduleId="+mid+"cid="+2).forward(request, response);
+        response.sendRedirect("ModuleManage?moduleId=" + mid + "&cid=" + cid );
 
     }
+
 
 }

@@ -41,7 +41,17 @@ public class Validation {
         }
         return true;
     }
-
+    public static boolean checkDesciptionCourse(String str) {
+        str = str.trim();
+        if (str == null || str.isBlank()) {
+            return false;
+        }
+        if(str.length() > 2000){
+            return false;
+        }
+        return true;
+    }
+    
     public static boolean checkInt(String str) {
         str = str.trim();
         for (int i = 0; i < str.length(); i++) {

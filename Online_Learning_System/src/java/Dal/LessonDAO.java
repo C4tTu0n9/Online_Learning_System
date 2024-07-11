@@ -10,6 +10,7 @@ import Model.LessonDTO;
 import Model.Payment;
 
 import Model.ModuleDTO;
+import Model.TeachingDTO;
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -183,11 +184,14 @@ public class LessonDAO {
 
     public ArrayList<ModuleDTO> getListModulByCid(int courseId) throws SQLException {
         ArrayList<ModuleDTO> list = new ArrayList<>();
-        String sql = "SELECT  [ModuleId]\n"
-                + "      ,[ModuleName]\n"
-                + "      ,[CourseId]\n"
-                + "  FROM [dbo].[Module] \n"
-                + "WHERE CourseId = ?";
+        String sql = """
+                       SELECT  [ModuleId]
+                                ,[ModuleName]
+                                ,[CourseId]
+                     		   ,[ModuleNumber]
+                        FROM [dbo].[Module] 
+                        WHERE CourseId = ?
+                        Order by ModuleNumber ASC """;
         try {
             con = new DBContext().getConnection();
             ps = con.prepareStatement(sql);
@@ -303,8 +307,47 @@ public class LessonDAO {
     }
 
     
+    
+        //Lấy lisst module theo course ID
+
+    public ArrayList<TeachingDTO> getListMentorByCid(int courseId) throws SQLException {
+        ArrayList<TeachingDTO> list = new ArrayList<>();
+        String sql = """
+                        SELECT [MentorId]
+                          ,t.[CourseId]
+                       	  ,p.Avatar
+                       	  ,p.ProfileId
+                       	  ,p.FullName
+                         FROM [Teaching] t
+                          JOIN [dbo].[Course] c ON c.CourseId = t.CourseId
+                          JOIN [dbo].[Profile] p ON p.ProfileId = t.MentorId
+                          where t.CourseId = ? """;
+        try {
+            con = new DBContext().getConnection();
+            ps = con.prepareStatement(sql);
+            ps.setInt(1, courseId);
+
+            rs = ps.executeQuery();
+            while (rs.next()) {
+                int mentorid = rs.getInt(1);
+                int CourseId = rs.getInt(2);
+                String avatar = rs.getString(3);
+                int ProfileId = rs.getInt(4);
+                String mentorName = rs.getString(5);
+
+                list.add(new TeachingDTO(mentorid, CourseId, avatar, ProfileId, mentorName));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Lỗi");
+        }
+
+        return list;
+    }
+    
+    
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         LessonDAO dao = new LessonDAO();
-        System.out.println(dao.getListModulByCidd(2));
+        System.out.println(dao.getListMentorByCid(2));
     }
 }

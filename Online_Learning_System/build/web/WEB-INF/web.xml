@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+    <session-config>
+        <session-timeout>60</session-timeout>
+    </session-config>
     <servlet>
         <servlet-name>LoginGoogleHandler</servlet-name>
         <servlet-class>Controller.LoginGoogleHandler</servlet-class>
@@ -72,6 +75,10 @@
         <servlet-name>EditQuizCRUDQuestions</servlet-name>
         <servlet-class>Controller.User.Manager.EditQuizCRUDQuestions</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>DeleteQuizServlet</servlet-name>
+        <servlet-class>Controller.User.Manager.DeleteQuizServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginGoogleHandler</servlet-name>
         <url-pattern>/google</url-pattern>
@@ -143,6 +150,10 @@
     <servlet-mapping>
         <servlet-name>EditQuizCRUDQuestions</servlet-name>
         <url-pattern>/editquizcrudquestion</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteQuizServlet</servlet-name>
+        <url-pattern>/deletequiz</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>

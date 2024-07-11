@@ -16,7 +16,6 @@
         <meta content="" name="keywords">
         <meta content="" name="description">
 
-
         <!-- Favicon -->
         <link href="${pageContext.request.contextPath}/img/favicon.ico" rel="icon">
 
@@ -39,9 +38,6 @@
         <!-- Template Stylesheet -->
         <link href="${pageContext.request.contextPath}/css/style.css" rel="stylesheet">
 
-
-
-
         <!-- Prevent the demo from appearing in search engines (REMOVE THIS) -->
         <meta name="robots" content="noindex">
 
@@ -59,10 +55,6 @@
 
         <!-- Sidebar Collapse -->
         <link type="text/css" href="${pageContext.request.contextPath}/assets/vendor/sidebar-collapse.min.css" rel="stylesheet">
-
-        <!--         App CSS 
-                <link type="text/css" href="${pageContext.request.contextPath}/assets/css/style.css" rel="stylesheet">-->
-
 
         <!-- Touchspin -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/assets/css/bootstrap-touchspin.css">
@@ -126,13 +118,13 @@
 
             <div class="container">
                 <h1 class="page-heading h2" style="margin-top: 10px;">Edit Quiz</h1>
-                <form id="addQuizForm" action="editquiz" method="post" onsubmit="return validateForm3(event)">
-                    <div class="card mb-4">
+                <form id="addQuizForm" action="editquiz" method="post">
+                    <div class="card">
                         <div class="card-header">
                             <h4 class="card-title">Module: ${moduleOfQuizEdit.getModulename()}</h4>
                         <input type="hidden" name="moduleId" value="${moduleOfQuizEdit.getModuleid()}">
                         <input type="hidden" name="quizId" value="${quizEdit.getQuizId()}">
-                        
+                        <input type="hidden" name="cid1" value="${moduleOfQuizEdit.getCourseid()}">
                     </div>
                     <div class="card-body">
                         <div class="form-group row">
@@ -144,7 +136,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="form-group row">
                             <label for="time_toggle" class="col-sm-3 col-form-label">Timeframe:</label>
                             <div class="col-sm-9">
@@ -163,7 +154,7 @@
                                         <select class="custom-select" name="timeUnit">
                                             <c:if test="${requestScope.minutes != 0}">
                                                 <option value="minutes" selected>Minutes</option>
-                                                <option value="seconds" select>Seconds</option>
+                                                <option value="seconds">Seconds</option>
                                             </c:if>
                                             <c:if test="${requestScope.seconds != 0}">
                                                 <option value="seconds" selected>Seconds</option>
@@ -186,61 +177,36 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <h1 class="page-heading h2" style="margin-top: 10px;">Edit Questions</h1>
-                <div class="card">
-                    <div class="card-header">
-                        <h4 class="card-title">Questions</h4>
-                    </div>
-                    <c:forEach items="${listQuestions}" var="question">
-                        <div class="nestable" id="nestable">
-                            <ul class="list-group list-group-fit nestable-list-plain mb-0">
-                                <li class="list-group-item nestable-item">
-                                    <div class="media">
-                                        <div class="media-body media-middle">
-                                            <p class="question-number" 
-                                               data-question-id="${question.getQuestionId()}"
-                                               data-question-name="${question.getQuestionName()}"
-                                               data-question-num="${question.questionNum}">
-                                                ${question.questionNum}. ${question.getQuestionName()}
-                                            </p>
-                                            <c:forEach items="${listAnswers}" var="answer">
-                                                <c:if test="${question.getQuestionId() == answer.getQuestionId()}">
-                                                    <div class="answer ${answer.isCorrect ? 'correct' : 'incorrect'}" 
-                                                         data-answer-choice="${answer.getChoices()}"
-                                                         data-is-correct="${answer.isCorrect}">
-                                                        ${answer.getChoices()}<br>
-                                                    </div>
-                                                </c:if>
-                                            </c:forEach>
-                                        </div>
-                                        <div class="media-right text-right">
-                                            <div>
-                                                <a class="btn btn-primary" data-toggle="modal" data-target="#editQuestionModal" 
-                                                   onclick="editQuestionModal(this, ${question.getQuestionId()})">Edit</a>
-                                                <a class="btn btn-danger" data-toggle="modal" data-target="#delete-question-modal" 
-                                                   onclick="deleteQuestionModal(${question.getQuestionId()})">Delete</a>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                    </c:forEach>
-                    <div class="card-header bg-white buttons-container">
-                        <a href="#" data-toggle="modal" data-target="#createQuestion" class="btn btn-success">Add Question</a>
-                    </div>
                     <div class="card-footer" style="display: flex; justify-content: space-between; align-items: center;">
                         <div class="">
-                            <input type="submit" name="AddQuiz" value="Save Changes" class="btn btn-success" style="width: 127.6px;">
+                            <button type="button" class="btn btn-success" style="width: 127.6px;" onclick="validateAndShowModal()">Save Change</button>
                         </div>
                         <div style="">
-                            <a href="ModuleManage?moduleId=${this_module.moduleid}&cid=${requestScope.cidCourse}" class="btn btn-danger">Cancel</a>
+                            <a href="ModuleManage?moduleId=${moduleOfQuizEdit.getModuleid()}&cid=${moduleOfQuizEdit.getCourseid()}" class="btn btn-danger">Cancel</a>
                         </div>
                     </div>
                 </div>
             </form>
+        </div>
+
+        <div class="modal fade" id="save-changes-modal">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary">
+                        <h5 class="modal-title" id="save-modal-label">Edit Question</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Do you want to edit questions?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="editQuestions()">Yes</button>
+                        <button type="button" class="btn btn-primary" onclick="submitForm()">No</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- jQuery -->
@@ -274,10 +240,51 @@
         <script src="${pageContext.request.contextPath}/lib/wow/wow.min.js"></script>
         <script src="${pageContext.request.contextPath}/lib/easing/easing.min.js"></script>
 
-        <jsp:include page="editquiz_canswer.jsp"></jsp:include>
-        <jsp:include page="editquiz_deletequestion.jsp"></jsp:include>
-        <jsp:include page="editquiz_editquestion.jsp"></jsp:include>
+        <!-- Custom Script -->
+        <script>
+            function showSaveModal() {
+                $('#save-changes-modal').modal('show');
+            }
 
-        
+            function submitForm() {
+                document.getElementById('addQuizForm').submit();
+            }
+
+            function editQuestions() {
+                document.getElementById('addQuizForm').submit();
+                // Replace 'edit-questions.jsp' with the actual URL of your new JSP page
+                window.location.href = 'editquizcrudquestion?quizId=${quizEdit.getQuizId()}';
+            }
+
+            function validateAndShowModal() {
+                // Lấy các giá trị từ các trường input
+                let quizTitle = $('#quizTitle').val();
+                let timeNumber = $('#timeNumber').val();
+                let quizScore = $('#quizScore').val();
+
+                // Clear current error messages
+                $('.error').html('');
+
+                // Check if fields are empty and show error messages
+                let isValid = true;
+                if (quizTitle === '') {
+                    $('#quizTitleError').html('Title Can Not Be Empty');
+                    isValid = false;
+                }
+                if (timeNumber === '') {
+                    $('#timeNumberError').html('Time Frame Of Quiz Can Not Be Empty');
+                    isValid = false;
+                }
+                if (quizScore === '') {
+                    $('#quizScoreError').html('Score Of Quiz Can Not Be Empty');
+                    isValid = false;
+                }
+
+                if (isValid) {
+                    showSaveModal();
+                }
+            }
+        </script>
+
     </body>
 </html>

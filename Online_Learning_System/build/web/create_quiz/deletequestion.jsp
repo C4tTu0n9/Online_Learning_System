@@ -29,7 +29,7 @@
         </div>
     </div>
 </div>
-<div id="delete-question-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteQuestionModalLabel"5321
+<div id="delete-question-modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="deleteQuestionModalLabel"
      aria-hidden="true">
     <!-- Your delete modal content here -->
 </div>
