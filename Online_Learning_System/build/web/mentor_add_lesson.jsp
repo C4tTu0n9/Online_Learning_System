@@ -229,10 +229,29 @@
         <script src="assets/js/fancytree.js"></script>
 
         <script>
-                                document.getElementById('videoLink').addEventListener('input', function () {
-                                    var videoUrl = this.value;
-                                    document.getElementById('videoFrame').src = videoUrl;
-                                });
+function getYouTubeId(url) {
+    var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    var match = url.match(regExp);
+    return (match && match[7].length == 11) ? match[7] : null;
+}
+
+function convertToEmbedLink(url) {
+    var videoId = getYouTubeId(url);
+    if (videoId != null) {
+        return "https://www.youtube.com/embed/" + videoId;
+    }
+    return null;
+}
+
+document.getElementById('videoLink').addEventListener('input', function () {
+    var videoUrl = this.value;
+    var embedUrl = convertToEmbedLink(videoUrl);
+    if (embedUrl) {
+        document.getElementById('videoFrame').src = embedUrl;
+    } else {
+        document.getElementById('videoFrame').src = "";
+    }
+});
         </script>
 
         <script>

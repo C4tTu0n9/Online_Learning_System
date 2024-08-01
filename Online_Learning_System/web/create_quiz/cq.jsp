@@ -112,7 +112,7 @@
                             <div class="col-sm-9">
                                 <div class="form-inline">
                                     <div class="form-group" style="margin-right: 10px; margin-top: 10px">
-                                        <input type="number" min="1" max="100" class="form-control text-center" name="timeNumber" id="timeNumber" style="width: 70px;">
+                                        <input type="number" min="1" max="59" class="form-control text-center" name="timeNumber" id="timeNumber" style="width: 70px;">
                                         <div id="timeNumberError" class="error"></div>
                                     </div>
                                     <div class="form-group" style="margin-right: 10px; margin-top: 10px">

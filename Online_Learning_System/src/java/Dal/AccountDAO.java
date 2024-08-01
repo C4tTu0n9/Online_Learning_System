@@ -18,14 +18,13 @@ public class AccountDAO extends DBContext {
 
     public static void main(String[] args) {
         AccountDAO dao = new AccountDAO();
-        System.out.println((dao.getAccountByEmailPass("tuong0505ht@gmail.com", "10101010")).getEmail());
-        System.out.println(dao.checkAccountExist("tuong0505ht@gmail.com"));
+//        System.out.println((dao.getAccountByEmailPass("tuong0505ht@gmail.com", "10101010")).getEmail());
+        System.out.println(dao.getAccountIdByEmail("tuong0505ht@gmail.com"));
+//
+////        dao.insertUser(new AccountDTO("tuongdeptrai@gmail.com", "67676767", 4), new Profile("Pham Cat Tuong", 0));
+//        AccountDTO a = dao.getAccountByEmailPass("tuong0505ht@gmail.com", "10101010");
 
-//        dao.insertUser(new AccountDTO("tuongdeptrai@gmail.com", "67676767", 4), new Profile("Pham Cat Tuong", 0));
-        AccountDTO a = dao.getAccountByEmailPass("tuong0505ht@gmail.com", "10101010");
-        System.out.println(dao.getAllAccount());
-
-        System.out.println("Succesfully");
+//        System.out.println(a);
         dao.activeOrInactiveAccount(12, 0);
     }
 
@@ -40,7 +39,7 @@ public class AccountDAO extends DBContext {
                                                   ,[RoleId],
                        						   p.*
                                               FROM [dbo].[Account] a
-                       					   join Profile p
+                       					   left join Profile p
                        					   on a.AccountId = p.ProfileId
                        					   where Email like ? and Password like ?""";
         try {
@@ -341,8 +340,77 @@ public class AccountDAO extends DBContext {
     }
 
     //===========Admin=================
-    //Lấy ra tất cả tài khoản
-    public ArrayList<AccountDTO> getAllAccount() {
+    //Lấy ra tất cả tài khoản của  mentor
+    
+     public ArrayList<AccountDTO> getAllMentorAccounts() {
+        ArrayList<AccountDTO> list = new ArrayList<>();
+        connection = getConnection();
+        String sql = """
+                     SELECT [AccountId]
+                       	  ,p.FullName
+                             ,[Email]
+                             ,[Password]
+                             ,[Status]
+                             ,[RoleId]
+                         FROM [Project Online Learning].[dbo].[Account] acc
+                         Join [dbo].[Profile] p on p.[ProfileId] = acc.AccountId
+                         Where [RoleId] = 3""";
+        try {
+            statement = connection.prepareStatement(sql);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int account_id = resultSet.getInt(1);
+                String fullName = resultSet.getString(2);
+                String email_in_db = resultSet.getString(3);
+                String password_in_db = resultSet.getString(4);
+                boolean status = resultSet.getBoolean(5);
+                int role_id = resultSet.getInt(6);
+
+                list.add(new AccountDTO(account_id, fullName, email_in_db, password_in_db, status, role_id));
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+    
+    public ArrayList<AccountDTO> getMyMentorAccounts(int manager_id) {
+        ArrayList<AccountDTO> list = new ArrayList<>();
+        connection = getConnection();
+        String sql = """
+                     SELECT [AccountId]
+                       	  ,p.FullName
+                             ,[Email]
+                             ,[Password]
+                             ,[Status]
+                             ,[RoleId]
+                         FROM [Project Online Learning].[dbo].[Account] acc
+                         Join [dbo].[Profile] p on p.[ProfileId] = acc.AccountId
+                         Where [RoleId] = 3  and p.ManagedBy = ?""";
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, manager_id);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int account_id = resultSet.getInt(1);
+                String fullName = resultSet.getString(2);
+                String email_in_db = resultSet.getString(3);
+                String password_in_db = resultSet.getString(4);
+                boolean status = resultSet.getBoolean(5);
+                int role_id = resultSet.getInt(6);
+
+                list.add(new AccountDTO(account_id, fullName, email_in_db, password_in_db, status, role_id));
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return list;
+    }
+
+    //Lấy ra tất cả tài khoản của  manager
+    public ArrayList<AccountDTO> getManagerAccount() {
         ArrayList<AccountDTO> list = new ArrayList<>();
 
         connection = getConnection();
@@ -354,7 +422,8 @@ public class AccountDAO extends DBContext {
                              ,[Status]
                              ,[RoleId]
                          FROM [Project Online Learning].[dbo].[Account] acc
-                         Join [dbo].[Profile] p on p.[ProfileId] = acc.AccountId """;
+                         Join [dbo].[Profile] p on p.[ProfileId] = acc.AccountId
+                         Where [RoleId] = 2 """;
         try {
             statement = connection.prepareStatement(sql);
             resultSet = statement.executeQuery();
@@ -537,8 +606,37 @@ public class AccountDAO extends DBContext {
             ex.printStackTrace();
         }
     }
-
     
+       //lấy account theo id để admin có thể sửa thông tin tài khoản
+    public AccountDTO getAccountIdByEmail(String Email) {
 
-    
+        connection = getConnection();
+        String sql = """
+                     SELECT [AccountId]
+                             ,[Email]
+                             ,[Password]
+                             ,[Status]
+                             ,[RoleId]
+                         FROM [Project Online Learning].[dbo].[Account]
+                         Where Email = ?""";
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setString(1, Email);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int acc_id = resultSet.getInt(1);
+                String email = resultSet.getString(2);
+                String pass = resultSet.getString(3);
+                boolean status = resultSet.getBoolean(4);
+                int role = resultSet.getInt(5);
+
+                return new AccountDTO(acc_id, email, pass, status, role);
+
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return null;
+    }
+
 }

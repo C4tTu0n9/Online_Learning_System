@@ -137,16 +137,25 @@
                             <div class="tab-content">
                                 <div class="tab-pane fade active show" id="mentor-manage">
                                     <h3 style="color: red">${requestScope.error}</h3>
+                                    <h6 class="alert-success" style="color: #000">${requestScope.message}</h6>
                                     <c:if test="${my_role == 2}">
-                                        <div>
-                                            <form action="mentor-manage?action=add_mentor" method="post">
-                                                <input type="file">
+                                        <!-- Download Template Section -->
+                                        <div style="display: flex">
+                                            <a href="mentor-manage?action=downloadTemplate" class="btn btn-outline-success">Download Template</a>
+                                        </div>
+                                        <form name="myForm" action="mentor-manage?action=add_mentor" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+                                            <div>
+                                                <h6>Input Gmail App Password:</h6>
+                                                <input type="text" name="app_pass" class="text-black-50" style="width: 50%">
+                                            </div><br>
+                                            <div>
+                                                <input type="file" name="excelFile" accept=".xls,.xlsx">
                                                 <div>
                                                     Upload file to add account for your mentors!
                                                 </div>
                                                 <button type="submit" class="btn btn-outline-primary">Submit</button>
-                                            </form>
-                                        </div>
+                                            </div><br>
+                                        </form>
                                     </c:if>
                                     <div class="tab-pane fade show" id="mentor-manage">
                                         <div class="card-body pb-2">
@@ -188,6 +197,32 @@
                                                     function confirmDelete() {
                                                         return confirm("Are you sure you want to delete this mentor?");
                                                     }
+            </script>
+            <script>
+                function validateForm() {
+                    var appPassword = document.forms["myForm"]["app_pass"].value;
+                    var fileInput = document.forms["myForm"]["excelFile"];
+                    var filePath = fileInput.value;
+                    var allowedExtensions = /(\.xls|\.xlsx)$/i;
+
+                    if (appPassword == "") {
+                        alert("App password must be filled out");
+                        return false;
+                    }
+
+                    if (filePath == "") {
+                        alert("Please select a file");
+                        return false;
+                    }
+
+                    if (!allowedExtensions.exec(filePath)) {
+                        alert('Please upload file having extensions .xls/.xlsx only.');
+                        fileInput.value = '';
+                        return false;
+                    }
+
+                    return true;
+                }
             </script>
 
         </div>

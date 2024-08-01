@@ -43,7 +43,7 @@
 
                         <div class="signin-form">
                             <h2 class="form-title">Reset Password</h2>
-                            <h4 style="color: red">${error}</h4>
+                           
 
                             <form  action="join?action=forgot" method="post" id="login-form">
                                 
@@ -57,7 +57,7 @@
                                 </div>
                                 
                             </form>
-                            
+                             <h4 style="color: red">${Error}</h4>
                         </div>
                     </div>
                 </div>

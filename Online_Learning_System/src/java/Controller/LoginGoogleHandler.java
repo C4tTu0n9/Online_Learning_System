@@ -12,6 +12,7 @@ import Util.SendEmail;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -79,7 +80,6 @@ public class LoginGoogleHandler extends HttpServlet {
         String password = generateRandomPassword();
         AccountDAO accountDAO = new AccountDAO();
 
-
         AccountDTO account_register = null;
         ProfileDTO profile_register = null;
         //kiem tra xem email co trong DB khong
@@ -104,6 +104,16 @@ public class LoginGoogleHandler extends HttpServlet {
             session.setAttribute("profile", profile_register);
         }
         session.setMaxInactiveInterval(60 * 30);
+        Cookie email_remember = new Cookie("email", account_register.getEmail());
+        Cookie password_remember = new Cookie("password", account_register.getPassword());
+        Cookie account_id = new Cookie("account_id", String.valueOf(account_register.getAccount_id()));
+        //check xem co tich vao remember me ko de luu vao cookie
+        email_remember.setMaxAge(60 * 60 * 24); //1 day
+        password_remember.setMaxAge(60 * 60 * 24);
+        account_id.setMaxAge(60 * 60 * 24);
+        response.addCookie(email_remember);
+        response.addCookie(account_id);
+        response.addCookie(password_remember);
         response.sendRedirect("home");
         //request.getRequestDispatcher("index.jsp").forward(request, response);
 

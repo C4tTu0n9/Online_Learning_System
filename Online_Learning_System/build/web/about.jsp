@@ -51,8 +51,7 @@
                     <h1 class="display-3 text-white animated slideInDown">About Us</h1>
                     <nav aria-label="breadcrumb">
                         <ol class="breadcrumb justify-content-center">
-                            <li class="breadcrumb-item"><a class="text-white" href="#">Home</a></li>
-                            <li class="breadcrumb-item"><a class="text-white" href="#">Pages</a></li>
+                            <li class="breadcrumb-item"><a class="text-white" href="home">Home</a></li>
                             <li class="breadcrumb-item text-white active" aria-current="page">About</li>
                         </ol>
                     </nav>
@@ -185,7 +184,7 @@
                 <div class="col-lg-3 col-md-6 wow fadeInUp" data-wow-delay="0.7s">
                     <div class="team-item bg-light">
                         <div class="overflow-hidden">
-                            <img class="img-fluid" src="img/team-4.jpg" alt="">
+                            <img class="img-fluid" src="" alt="">
                         </div>
                         <div class="position-relative d-flex justify-content-center" style="margin-top: -23px;">
                             <div class="bg-light d-flex justify-content-center pt-2 px-1">

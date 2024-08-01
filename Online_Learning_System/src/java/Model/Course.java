@@ -67,7 +67,6 @@ public class Course {
         this.date = date;
         this.study_time = study_time;
         this.is_active = is_active;
-
         this.firstlessonid = firstlessonid;
     }
 

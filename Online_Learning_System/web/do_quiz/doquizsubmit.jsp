@@ -215,11 +215,7 @@
                             </c:when>
                             <c:otherwise>
                                 <span style="color: red;">Incorrect</span> </br>
-                                <c:forEach items="${listAnswersCorrect}" var="correct">
-                                    <c:if test="${correct.getQuestionId() == question.getQuestionId()}">
-                                        ${correct.getChoices()}</br>
-                                    </c:if>
-                                </c:forEach>
+                                
                             </c:otherwise>
                         </c:choose>
                     </div>

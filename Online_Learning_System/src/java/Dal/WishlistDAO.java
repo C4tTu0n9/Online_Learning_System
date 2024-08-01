@@ -41,6 +41,24 @@ public class WishlistDAO extends DBContext {
         }
 
     }
+    
+    public void deleteCourseWishList(int account_id, String course_id) {
+        connection = getConnection();
+        String sql = """
+                     DELETE FROM [dbo].[WishList]
+                           WHERE CourseId = ? and AccountId = ?
+                                  """;
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setInt(2, account_id);
+            statement.setString(1, course_id);
+            statement.executeUpdate();
+
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+    }
 
     
     

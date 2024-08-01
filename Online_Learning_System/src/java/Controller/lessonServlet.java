@@ -14,6 +14,7 @@ import Dal.QuizDAO;
 import Model.AccountDTO;
 
 import Model.Category;
+import Model.Course;
 import YoutubeAPI.YoutubeDuration;
 import Model.DiscussionLesson;
 import Model.Enrollment;
@@ -87,6 +88,7 @@ public class lessonServlet extends HttpServlet {
         LessonDAO dao = new LessonDAO();
         DisscussionDAO discussDao = new DisscussionDAO();
         QuizDAO quizDao = new QuizDAO();
+        CourseDetailDAO cdtDao = new CourseDetailDAO();
         HttpSession session = request.getSession();
 
         AccountDTO acc = (AccountDTO) session.getAttribute("account");
@@ -139,11 +141,11 @@ public class lessonServlet extends HttpServlet {
 
                 ArrayList<Enrollment> listEnrollment = dao.getEnrollmentByAccountId(acc.getAccount_id());
 
-                
+                Course c = cdtDao.getCourseById(course_id);
                 //Kiểm tra có phải người tạo ra khóa học hay không(Phân Quyền)
-                if(!checkMentorInLesson(acc.getAccount_id(), course_id, dao)){
+                if(!checkMentorInLesson(acc.getAccount_id(), course_id, dao) && createBy_id != acc.getAccount_id()){
                     //Kiểm tra người dùng nếu chưa mua khóa học mà truy cập đường link thì chuyển về home       
-                    if (!isPaid(course_id, listEnrollment)) {
+                    if (!isPaid(course_id, listEnrollment) && c.getPrice() > 0) {
                         response.sendRedirect("home");
                         return;
                     }
@@ -272,7 +274,7 @@ public class lessonServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession();
         String parentComentId_str = request.getParameter("parent");
-
+        
         Integer parentCommentId = null;
         if (parentComentId_str != null && !parentComentId_str.isEmpty() && !"null".equals(parentComentId_str)) {
             parentCommentId = Integer.parseInt(parentComentId_str);
@@ -284,10 +286,18 @@ public class lessonServlet extends HttpServlet {
         AccountDTO acc = (AccountDTO) session.getAttribute("account");
 
         String lession_id = request.getParameter("lessonid");
-
+        try {
+        if(Integer.parseInt(lession_id) == 0) {
+            response.sendRedirect("lesson?cid=" + cid + "&lessonid=" + lession_id + "&createBy=" + createBy);
+            return;
+        }
         DisscussionDAO dao = new DisscussionDAO();
         DiscussionLesson discuss = new DiscussionLesson(parentCommentId, acc.getAccount_id(), Integer.parseInt(lession_id), comment, new Timestamp(System.currentTimeMillis()));
         dao.InsertComment(discuss);
+        } catch(Exception ex) {
+              response.sendRedirect("lesson?cid=" + cid + "&lessonid=" + 0 + "&createBy=" + createBy);
+            return;
+        }
         response.sendRedirect("lesson?cid=" + cid + "&lessonid=" + lession_id + "&createBy=" + createBy);
     }
 
@@ -356,6 +366,7 @@ public class lessonServlet extends HttpServlet {
         return sumDuration;
     }
 
+    
     private void displayTotalTimeLearnCourse(HttpServletRequest request, HttpServletResponse response, long sumDuration)
             throws ServletException, IOException {
         String time = null;

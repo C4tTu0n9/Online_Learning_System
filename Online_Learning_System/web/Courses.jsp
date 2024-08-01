@@ -95,22 +95,6 @@
 
         <!--Xử lí nút resum-->
 
-        <%
-                String lastLessonId = null;
-                Cookie[] cookies = request.getCookies();
-                if (cookies != null) {
-                    for (Cookie cookie : cookies) {
-                    if ("lastLessonId".equals(cookie.getName())) {
-                        lastLessonId = cookie.getValue();
-                        break;
-                    }
-                }
-                }
-            if (lastLessonId == null) {
-            // Nếu không có cookie, bạn có thể đặt giá trị mặc định, ví dụ: bài học đầu tiên
-            lastLessonId = "1"; // hoặc bất kỳ giá trị nào khác mà bạn cho là hợp lý
-            }
-        %>
 
 
         <jsp:include page="common/menu.jsp"></jsp:include>
@@ -168,34 +152,10 @@
                                             <c:otherwise><!--Nguoi dung da dang nhap-->
 
                                                 <!--Nguoi này là ngươi tao ra khoa hoc duoc join truc tiep-->
-                                                <c:choose>
-                                                    <c:when test="${o.getCreate_by() == sessionScope.account.getAccount_id()}">
-                                                        <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                                                    </c:when>
+                                            
+                                                        <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}&price=${o.getPrice()}&ndck=${sessionScope.profile.fullname}&address=course" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
+                                              
 
-                                                    <c:otherwise>
-
-
-                                                        <c:set var="currentCourseId" value="${o.getCourse_id()}"/>
-                                                        <c:set var="isPaid" value="false"/>
-                                                        <c:if test="${fn:length(listEnrollment) > 0}">
-                                                            <c:forEach items="${listEnrollment}" var="i">
-                                                                <c:if test="${currentCourseId == i.getCourseid()}">                   
-                                                                    <c:set var="isPaid" value="true"/>
-                                                                </c:if>
-                                                            </c:forEach>
-                                                        </c:if>
-                                                        <c:choose>
-                                                            <c:when test="${isPaid == true}">
-                                                                <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <a href="vnpay_pay.jsp?price=${o.getPrice()}&cid=${o.getCourse_id()}&acc=${sessionScope.account.getAccount_id()}&ndck=${sessionScope.profile.fullname} chuyen khoan" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                                                            </c:otherwise>
-
-                                                        </c:choose> 
-                                                    </c:otherwise>
-                                                </c:choose>
                                             </c:otherwise>
 
                                         </c:choose>
@@ -275,35 +235,8 @@
 
                                             <c:otherwise><!--Nguoi dung da dang nhap-->
 
-                                                <!--Nguoi này là ngươi tao ra khoa hoc duoc join truc tiep-->
-                                                <c:choose>
-                                                    <c:when test="${o.getCreate_by() == sessionScope.account.getAccount_id()}">
-                                                        <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                                                    </c:when>
+                                                 <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}&price=${o.getPrice()}&ndck=${sessionScope.profile.fullname}&address=course" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
 
-                                                    <c:otherwise>
-
-
-                                                        <c:set var="currentCourseId" value="${o.getCourse_id()}"/>
-                                                        <c:set var="isPaid" value="false"/>
-                                                        <c:if test="${fn:length(listEnrollment) > 0}">
-                                                            <c:forEach items="${listEnrollment}" var="i">
-                                                                <c:if test="${currentCourseId == i.getCourseid()}">                   
-                                                                    <c:set var="isPaid" value="true"/>
-                                                                </c:if>
-                                                            </c:forEach>
-                                                        </c:if>
-                                                        <c:choose>
-                                                            <c:when test="${isPaid == true}">
-                                                                <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <a href="vnpay_pay.jsp?price=${o.getPrice()}&cid=${o.getCourse_id()}&acc=${sessionScope.account.getAccount_id()}&ndck=${sessionScope.profile.fullname} chuyen khoan" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                                                            </c:otherwise>
-
-                                                        </c:choose> 
-                                                    </c:otherwise>
-                                                </c:choose>
                                             </c:otherwise>
 
                                         </c:choose>
@@ -382,35 +315,8 @@
 
                                             <c:otherwise><!--Nguoi dung da dang nhap-->
 
-                                                <!--Nguoi này là ngươi tao ra khoa hoc duoc join truc tiep-->
-                                                <c:choose>
-                                                    <c:when test="${o.getCreate_by() == sessionScope.account.getAccount_id()}">
-                                                        <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                                                    </c:when>
+                                                    <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}&price=${o.getPrice()}&ndck=${sessionScope.profile.fullname}&address=course" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
 
-                                                    <c:otherwise>
-
-
-                                                        <c:set var="currentCourseId" value="${o.getCourse_id()}"/>
-                                                        <c:set var="isPaid" value="false"/>
-                                                        <c:if test="${fn:length(listEnrollment) > 0}">
-                                                            <c:forEach items="${listEnrollment}" var="i">
-                                                                <c:if test="${currentCourseId == i.getCourseid()}">                   
-                                                                    <c:set var="isPaid" value="true"/>
-                                                                </c:if>
-                                                            </c:forEach>
-                                                        </c:if>
-                                                        <c:choose>
-                                                            <c:when test="${isPaid == true}">
-                                                                <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <a href="vnpay_pay.jsp?price=${o.getPrice()}&cid=${o.getCourse_id()}&acc=${sessionScope.account.getAccount_id()}&ndck=${sessionScope.profile.fullname} chuyen khoan" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
-                                                            </c:otherwise>
-
-                                                        </c:choose> 
-                                                    </c:otherwise>
-                                                </c:choose>
                                             </c:otherwise>
 
                                         </c:choose>

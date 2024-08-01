@@ -145,7 +145,7 @@
 
                             <!-- Page Heading -->
                             <h1 class="h3 mb-2 text-gray-800">Tables</h1>
-                            <div class="container">
+<!--                            <div class="container">
                                 <h2>Import Mentor Accounts</h2>
                                 <form action="manageAccount?action=import" method="POST" enctype="multipart/form-data" class="upload-form">
                                     <label for="file-upload" class="custom-file-upload">
@@ -153,16 +153,16 @@
                                     </label>
                                     <input type="submit" value="Import" class="submit-btn">
                                 </form>
-                            </div>
+                            </div>-->
 
                             <!-- DataTales Example -->
                             <div class="card shadow mb-4">
                                 <div class="card-header py-3">
-                                    <h5 class="card-title">All Students List  </h5>
+                                    <h5 class="card-title">Managers List  </h5>
                                     <div>
 
                                         <a href="manageAccount?action=addAccount" class="btn btn-primary">+ Add new</a>
-                                        <a href="manageAccount?action=import" style="background-color: orangered" class="btn btn-primary">- Delete</a>
+<!--                                        <a href="manageAccount?action=import" style="background-color: orangered" class="btn btn-primary">- Delete</a>-->
 
                                     </div>
                                 </div>

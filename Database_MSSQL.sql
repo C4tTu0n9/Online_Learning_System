@@ -2,6 +2,7 @@
 go
 drop database [Project Online Learning]
 go
+
 create database [Project Online Learning]
 go
 use [Project Online Learning]
@@ -21,29 +22,29 @@ create table Account(
 	Email varchar(255) not null, 
 	Password varchar(255) not null,
 	Status bit not null,
-	RoleId int foreign key references Role(RoleId) not null,
+	FullName varchar(255),
+	Gender bit,
+	Avatar text,
+	Money int,
+	RoleId int foreign key references Role(RoleId) not null
 );
 
 insert into Account
 values
-('tuong0505ht@gmail.com','10101010',1,1),
-('manager@gmail.com','123123123',1,2),
-('mentor001@gmail.com','123123123',1,3),
-('mentee001@gmail.com','123123123',1,4),
-('howkteam@gmail.com','12345678',1,3),
-('mentor002@gmail.com','123123123',1,3),
-('mentor003@gmail.com','123123123',1,3),
-('mentor004@gmail.com','123123123',1,3);
+('tuong0505ht@gmail.com','10101010',1,'Pham Cat Tuong',1,null,null,1),
+('tuongpcfx21626@funix.edu.vn','123123123',1,'Manager one',1,null,null,2),
+('mentor001@gmail.com','123123123',1,'Mentor one',1,null,null,3),
+('mentee001@gmail.com','123123123',1,'Mentee one',0,null,null,4),
+('howkteam@gmail.com','12345678',1,'HowKTeam',1,null,null,3),
+('mentor002@gmail.com','123123123',1,'Mentor two',0,null,null,3)
 
 
-create table Profile(
-	ProfileId int primary key not null,
-	foreign key (ProfileId) references Account(AccountId),
-	FullName nvarchar(255),
-	Gender int, -- 0 Female, 1 Male, 2 Other
-	Avatar varchar(2000),
-	Money money,
-	ManagedBy int foreign key references Account(AccountId),
+create table ManagedBy(
+	ManagerId int not null,
+	foreign key (ManagerId) references Account(AccountId),
+	MentorId int not null,
+	foreign key (MentorId) references Account(AccountId),
+	primary key(ManagerId,MentorId)
 );
 
 insert into Profile
@@ -188,26 +189,7 @@ Bạn muốn củng cố lại kiến thức đã học từ lâu.
 ',
  'https://lh3.googleusercontent.com/d/1xxouEo75gTaX_nkVHpqdJrvZC50aKMTv',
  700000, 20, 'IT',2 ,'2024-06-12', '1.30 Hrs', 1
- )
- 
-INSERT INTO [dbo].[Course]
-     VALUES
-           (
-		   'Kỹ năng giao tiếp trong kinh doanh: Viết và ngữ pháp trong kinh doanh',
-           'Biến giao tiếp thành lợi thế nghề nghiệp lâu dài, mở ra những cánh cửa thay vì nguồn gốc của sự thiếu tự tin và nghi ngờ bản thân.
-Khóa học này sẽ biến bạn thành một nhà văn và người giao tiếp giỏi hơn, đây là một kỹ năng giúp bạn phát triển sự nghiệp và khiến những ý tưởng của bạn được lắng nghe và xem xét!
-Trở thành một nhà văn kinh doanh giỏi hơn và cư xử chuyên nghiệp hơn trong văn bản và tương tác với sếp, khách hàng hoặc đồng nghiệp - hôm nay và trong phần còn lại của sự nghiệp của bạn.'
-           ,'https://img-c.udemycdn.com/course/240x135/2323470_7191_9.jpg'
-           ,799000
-           ,10
-           ,'BSN'
-           ,2
-           ,'2024/06/18'
-           ,'5.4 Hrs'
-           ,1);
-		   
-		   INSERT INTO [dbo].[Course] 
-VALUES (
+ ),(
     'Crash Course Business - Soft Skills',
 	'Welcome to a new Crash Course series! Join Evelyn from the Internets as she hosts this 17 episode series on Soft Skills, which is going to be all about learning to be in a working environment, applying for jobs, interviewing, and so much more. In this episode, we start by talking about why "Trust" is so important in Business. ',
     'https://i.ytimg.com/vi/8UnfCkFVQ9E/maxresdefault.jpg',
@@ -218,11 +200,7 @@ VALUES (
     '2024/06/19',
     '6.1 Hrs',
     1
-)
-
-
-  INSERT INTO [dbo].[Course] 
-VALUES (
+),(
     'Visual Communication Design for Digital Media',
 	'The course will impart knowledge on the different aspects of visual communication design, emphasizing on virtual media platform. In contemporary visual design pedagogy, virtual media technology is an emerging paradigm. The course will emphasize on understanding of visual cognition, which is the key factor to achieve user-friendly design. Usage of contemporary technology like, eye tracking will also be introduced as user testing tool. The course will enable the students to learn visual design in virtual media through a methodological approach.',
     'https://i.ytimg.com/vi/oa67x6faDJg/maxresdefault.jpg',
@@ -233,12 +211,7 @@ VALUES (
     '2024/06/19',
     '5.1 Hrs',
     1
-)
-
-
-
-  INSERT INTO [dbo].[Course] 
-VALUES (
+), (
     'Crash Course Computer Science',' Welcome to Crash Course Computer Science! So today, we’re going to take a look at computing’s origins, because even though our digital computers are relatively new, the need for computation is not. Since the start of civilization itself, humans have had an increasing need for special devices to help manage laborious tasks, and as the scale of society continued to grow, these computational devices began to play a crucial role in amplifying our mental abilities. From the abacus and astrolabe to the difference engine and tabulating machine, we’ve come a long way to satisfying this increasing need, and in the process completely transformed commerce, government, and daily life. ',
     'https://www.chrisharrison.net/projects/crashcourse/CrashCourseCSLogoSplash.jpg',
     650000,
@@ -248,8 +221,15 @@ VALUES (
     '2024/06/19',
     '8.3 Hrs',
     1
-);
+)
 
+ 
+
+		   
+		 
+
+
+ 
 
 
 create table CourseRating(
@@ -277,8 +257,8 @@ create table Teaching(
 
 
 insert into Teaching 
-values (5, 1),  (5,5) ,
-(3, 3), (3, 4),(3,2)
+values (5, 1),  (5,5) , (5,8),
+(3, 3), (3, 4),(3,2),(3, 6), (3, 7)
 
 
 create table WishList(
@@ -302,12 +282,18 @@ create table Enrollment(
 	Progress int --per 100%
 );
  
-  insert into Enrollment
+ 
+ insert into Enrollment
   values
   (1,1,'2024-06-07',0),
   (1,2,'2024-06-09',50),
   (1,3,'2024-06-13',20),
-  (1,4,'2024-05-20',80);
+  (1,4,'2024-05-20',100),
+  (4,1,'2024-07-08',80),
+  (4,2,'2024-05-07',50),
+  (4,3,'2024-07-07',80),
+  (4,4,'2024-04-07',100);
+
 
 
 
@@ -379,7 +365,22 @@ INSERT INTO [dbo].[Payment]
            ,'2024/05/20'
            ,'VNPAY'
            ,1000000)
-
+insert into [Payment]
+VALUES(
+4,1,'2024-07-08','VNPAY',500000
+)
+insert into [Payment]
+VALUES(
+4,3,'2024-07-07','VNPAY',800000
+)
+insert into [Payment]
+VALUES(
+4,4,'2024-04-07','VNPAY',1000000
+)
+insert into [Payment]
+VALUES(
+4,2,'2024-05-07','VNPAY',500000
+)
 
 --Tuong insert ModuleNumber
 create table Module(
@@ -464,7 +465,7 @@ create table Quiz(
 	ModuleId int foreign key references Module(ModuleId),
 	QuizName varchar(255),
 	QuizTime time,
-	PassScore int,
+	PassScore int
 );
 
 create table Question(
@@ -472,13 +473,13 @@ create table Question(
 	QuestionNum int,
 	QuizId int foreign key references Quiz(QuizId),
 	QuestionName nvarchar(255),
-	Type bit, -- 0: checkBox, 1: Radio
+	Type bit -- 0: checkBox, 1: Radio
 );
 
 create table QuestionChoices(
 	QuestionId int foreign key references Question(QuestionId),
 	Choices text,
-	IsCorrect bit,
+	IsCorrect bit
 );
 
 create table AnswerQuestion(
@@ -486,7 +487,7 @@ create table AnswerQuestion(
 	AccountId int references Account(AccountId),
 	QuestionId int references Question(QuestionId),
 	Answer text,
-	IsCorrect bit,
+	IsCorrect bit
 );
 
 --Hatro edit
@@ -495,6 +496,7 @@ create table ScoreQuiz(
 	AccountId int references Account(AccountId),
 	QuizId int references Quiz(QuizId),
 	Score float,
+	IsPass bit
 );
 
 create table DiscussionLesson(
@@ -512,7 +514,7 @@ create table Message(
 	SenderId int foreign key references Account(AccountId),
 	ReceiverId int foreign key references Account(AccountId),
 	MessageText text,
-	MessageTime datetime,
+	MessageTime datetime
 );
 
 
@@ -527,8 +529,11 @@ create table Certificate(
 	CourseId int foreign key references Course(CourseId),
 	AccountId int foreign key references Account(AccountId),
 	Issuer int foreign key references Account(AccountId),
-	IssueDate date,
+	IssueDate date
 );
 
 
 
+-- Thêm cột AttemptNumber vào bảng AnswerQuestion
+ALTER TABLE AnswerQuestion
+ADD AttemptNumber INT;

@@ -249,14 +249,17 @@ public class LessonManageDAO {
     public LessonDTO checkLessonExist(String lessonName) throws SQLException {
 
         String sql = """
-                     SELECT [LessonId]
-                           ,[ModuleId]
-                           ,[LessonName]
-                           ,[LessonContent]
-                           ,[LessonVideo]
-                           ,[Duration]
-                       FROM [Project Online Learning].[dbo].[Lesson]
-                      WHERE LOWER(LessonName) = LOWER(?)
+                       SELECT [LessonId]
+                       ,l.[ModuleId]
+                       ,[LessonName]
+                       ,[LessonContent]
+                       ,[LessonVideo]
+                       ,[Duration]
+                     , c.CourseId
+                       FROM [Project Online Learning].[dbo].[Lesson] l
+                     	join [dbo].[Module] m on m.ModuleId = l.ModuleId
+                     	join [dbo].[Course] c on m.CourseId = c.CourseId
+                        WHERE LOWER(LessonName) = LOWER(?)
                      """;
         try {
             con = new DBContext().getConnection();
@@ -270,8 +273,9 @@ public class LessonManageDAO {
                 String lesson_content = rs.getString(4);
                 String lesson_video = rs.getString(5);
                 long duration = rs.getInt(6);
+                int courseId = rs.getInt(7);
 
-                return new LessonDTO(lesson_id, modulid, lesson_name, lesson_content, lesson_video, duration);
+                return new LessonDTO(lesson_id, modulid, lesson_name, lesson_content, lesson_video, duration, courseId);
             }
         } catch (Exception e) {
             e.printStackTrace();

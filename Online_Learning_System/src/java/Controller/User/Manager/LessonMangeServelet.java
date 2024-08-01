@@ -157,28 +157,34 @@ public class LessonMangeServelet extends HttpServlet {
             throws ServletException, IOException {
 
         String action = (request.getParameter("action") == null) ? "" : request.getParameter("action");
-
+        String msg = "";
         String cid = request.getParameter("cid");
         String lessonName = request.getParameter("lessonName");
         String moduleid = request.getParameter("module");
         String lessonContent = request.getParameter("lessonContent");
         String videoLink = request.getParameter("videoLink");
-        long duration = getDuraton(videoLink);
-        LessonManageDAO dao = new LessonManageDAO();
-
-        //Lấy ra được list module theo course id khi add hoặc update
-        String msg = "";
+        String videoLinkEmbed = YoutubeDuration.convertToEmbedLink(videoLink);
         try {
+            //Lấy ra được list module theo course id khi add hoặc update
+            LessonManageDAO dao = new LessonManageDAO();
             ArrayList<ModuleDTO> listModule = dao.getListModuleByCid(Integer.parseInt(cid));
-            if (dao.checkLessonExist(lessonName) != null) {
-                msg = "Lesson was exist";
+            if (videoLinkEmbed == null) {
+                msg = "Video link is not valid";
             } else {
-                LessonDTO lesson = new LessonDTO(Integer.parseInt(moduleid), lessonName, lessonContent, videoLink, duration);
-                dao.InsertLesson(lesson);
-                response.sendRedirect("ModuleManage?moduleId=" + moduleid + "&cid=" + cid);
-                return;
+                long duration = getDuraton(videoLinkEmbed);
+
+                if (dao.checkLessonExist(lessonName) != null && Integer.parseInt(cid) == dao.checkLessonExist(lessonName).getCourseid()) {
+                    msg = "Lesson was exist";
+                } else {
+                    LessonDTO lesson = new LessonDTO(Integer.parseInt(moduleid), lessonName, lessonContent, videoLinkEmbed, duration);
+                    dao.InsertLesson(lesson);
+                    response.sendRedirect("ModuleManage?moduleId=" + moduleid + "&cid=" + cid);
+                    return;
+                }
+
             }
 
+            request.setAttribute("listModule", listModule);
             request.setAttribute("msg", msg);
             request.setAttribute("action", action);
             request.setAttribute("cid", cid);
@@ -186,12 +192,9 @@ public class LessonMangeServelet extends HttpServlet {
             request.setAttribute("lessonContent", lessonContent);
             request.setAttribute("videoLink", videoLink);
             request.setAttribute("moduleid", moduleid);
-            request.setAttribute("listModule", listModule);
-
-            request.getRequestDispatcher("mentor_add_lesson.jsp").forward(request, response);
-
         } catch (Exception e) {
         }
+        request.getRequestDispatcher("mentor_add_lesson.jsp").forward(request, response);
 
     }
 
@@ -234,35 +237,40 @@ public class LessonMangeServelet extends HttpServlet {
     //Update dữ liệu mới vào database
     private void updateLessonDoPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String msg = "";
         String cid = request.getParameter("cid");
         String lessonid = request.getParameter("lessonid");
         String lessonName = request.getParameter("lessonName");
         String moduleid = request.getParameter("module");
         String lessonContent = request.getParameter("lessonContent");
         String videoLink = request.getParameter("videoLink");
+        String videoLinkEmbed = YoutubeDuration.convertToEmbedLink(videoLink);
         String action = (request.getParameter("action") == null) ? "" : request.getParameter("action");
-
-        long duration = getDuraton(videoLink);
-        LessonManageDAO dao = new LessonManageDAO();
-        String msg = "";
-
+        long duration = 0;
         try {
+            LessonManageDAO dao = new LessonManageDAO();
             ArrayList<ModuleDTO> listModule = dao.getListModuleByCid(Integer.parseInt(cid));
-            if (dao.checkLessonExist(lessonName) != null && Integer.parseInt(lessonid) != dao.checkLessonExist(lessonName).getLessonid()) {
-                msg = "Lesson was exist";
+            if (videoLinkEmbed == null) {
+                msg = "Video link is not valid";
             } else {
-                LessonDTO lesson = new LessonDTO(Integer.parseInt(lessonid), Integer.parseInt(moduleid), lessonName, lessonContent, videoLink, duration);
 
-                dao.updateLesson(lesson);
-                response.sendRedirect("ModuleManage?moduleId=" + moduleid + "&cid=" + cid);
-                return;
+                duration = getDuraton(videoLinkEmbed);
+
+                if (dao.checkLessonExist(lessonName) != null && Integer.parseInt(lessonid) != dao.checkLessonExist(lessonName).getLessonid()
+                        && Integer.parseInt(cid) == dao.checkLessonExist(lessonName).getCourseid()) {
+                    msg = "Lesson was exist";
+                } else {
+                    LessonDTO lesson = new LessonDTO(Integer.parseInt(lessonid), Integer.parseInt(moduleid), lessonName, lessonContent, videoLinkEmbed, duration);
+
+                    dao.updateLesson(lesson);
+                    response.sendRedirect("ModuleManage?moduleId=" + moduleid + "&cid=" + cid);
+                    return;
+                }
             }
-
-            LessonDTO lesson = new LessonDTO(Integer.parseInt(lessonid), Integer.parseInt(moduleid), lessonName, lessonContent, videoLink, duration);
-
+            LessonDTO lesson = new LessonDTO(Integer.parseInt(lessonid), Integer.parseInt(moduleid), lessonName, lessonContent, videoLinkEmbed, duration);
+            request.setAttribute("listModule", listModule);
             request.setAttribute("msg", msg);
             request.setAttribute("lesson", lesson);
-            request.setAttribute("listModule", listModule);
             request.setAttribute("action", action);
             request.setAttribute("cid", cid);
             request.getRequestDispatcher("mentor_update_lesson.jsp").forward(request, response);

@@ -142,9 +142,9 @@
                                 <div class="form-inline">
                                     <div class="form-group" style="margin-right: 10px; margin-top: 10px">
                                         <c:if test="${requestScope.minutes != 0}">
-                                            <input type="number" min="1" max="100" class="form-control text-center" name="timeNumber" id="timeNumber" style="width: 70px;" value="${requestScope.minutes}">
+                                            <input type="number" min="1" max="59" class="form-control text-center" name="timeNumber" id="timeNumber" style="width: 70px;" value="${requestScope.minutes}">
                                         </c:if>
-                                        <c:if test="${requestScope.seconds != 0 && requestScope.minutes == 0}">
+                                        <c:if test="${requestScope.seconds != 0}">
                                             <input type="number" min="1" max="59" class="form-control text-center" name="timeNumber" id="timeNumber" style="width: 70px;" value="${requestScope.seconds}">
                                         </c:if>
 
@@ -208,6 +208,56 @@
                 </div>
             </div>
         </div>
+        <script>
+            function showSaveModal() {
+                $('#save-changes-modal').modal('show');
+            }
+
+            function submitForm() {
+                document.getElementById('addQuizForm').submit();
+            }
+
+            function editQuestions() {
+                // Thêm hàm xử lý để kiểm tra và submit form trước khi chuyển hướng
+                if (validateForm()) {
+                    document.getElementById('addQuizForm').submit();
+                    setTimeout(function () {
+                        window.location.href = 'editquizcrudquestion?quizId=${quizEdit.getQuizId()}';
+                    }, 100); // Điều chỉnh thời gian trì hoãn nếu cần thiết
+                }
+            }
+
+            function validateForm() {
+                let quizTitle = $('#quizTitle').val();
+                let timeNumber = $('#timeNumber').val();
+                let quizScore = $('#quizScore').val();
+                let timeNumberValue = parseInt(timeNumber, 10);
+
+                $('.error').html('');
+
+                let isValid = true;
+                if (quizTitle === '') {
+                    $('#quizTitleError').html('Title Can Not Be Empty');
+                    isValid = false;
+                }
+                if (timeNumber === '' || isNaN(timeNumberValue) || timeNumberValue < 1 || timeNumberValue > 59) {
+                    $('#timeNumberError').html('Time Frame Of Quiz Must Be Between 1 and 59');
+                    isValid = false;
+                }
+                if (quizScore === '') {
+                    $('#quizScoreError').html('Score Of Quiz Can Not Be Empty');
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            function validateAndShowModal() {
+                if (validateForm()) {
+                    showSaveModal();
+                }
+            }
+        </script>
 
         <!-- jQuery -->
         <script src="${pageContext.request.contextPath}/assets/vendor/jquery.min.js"></script>
@@ -241,50 +291,6 @@
         <script src="${pageContext.request.contextPath}/lib/easing/easing.min.js"></script>
 
         <!-- Custom Script -->
-        <script>
-            function showSaveModal() {
-                $('#save-changes-modal').modal('show');
-            }
-
-            function submitForm() {
-                document.getElementById('addQuizForm').submit();
-            }
-
-            function editQuestions() {
-                document.getElementById('addQuizForm').submit();
-                // Replace 'edit-questions.jsp' with the actual URL of your new JSP page
-                window.location.href = 'editquizcrudquestion?quizId=${quizEdit.getQuizId()}';
-            }
-
-            function validateAndShowModal() {
-                // Lấy các giá trị từ các trường input
-                let quizTitle = $('#quizTitle').val();
-                let timeNumber = $('#timeNumber').val();
-                let quizScore = $('#quizScore').val();
-
-                // Clear current error messages
-                $('.error').html('');
-
-                // Check if fields are empty and show error messages
-                let isValid = true;
-                if (quizTitle === '') {
-                    $('#quizTitleError').html('Title Can Not Be Empty');
-                    isValid = false;
-                }
-                if (timeNumber === '') {
-                    $('#timeNumberError').html('Time Frame Of Quiz Can Not Be Empty');
-                    isValid = false;
-                }
-                if (quizScore === '') {
-                    $('#quizScoreError').html('Score Of Quiz Can Not Be Empty');
-                    isValid = false;
-                }
-
-                if (isValid) {
-                    showSaveModal();
-                }
-            }
-        </script>
 
     </body>
 </html>

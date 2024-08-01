@@ -125,6 +125,14 @@
 
             <div class="container">
                 <h1 class="page-heading h2" style="margin-top: 10px;">Create Questions</h1>
+                
+                <!-- Display error message -->
+                <div id="error-message" class="alert alert-danger" style="display: none;"></div>
+                
+                <div class="card-header bg-white buttons-container">
+                    <a href="question?action=download" id="downloadTemplateQuiz" class="btn btn-success">Download Template</a>
+                    <a href="#" id="importQuestionBtn" class="btn btn-success">Import Question</a>
+                </div>
                 <form id="addQuizForm">
                     <div class="card">
                         <div class="card-header">
@@ -167,12 +175,50 @@
                     </c:forEach>
                     <div class="card-header bg-white buttons-container">
                         <a href="#" data-toggle="modal" data-target="#createQuestion" class="btn btn-success">Add Question</a>
-                        <a href="../Project_E-Learning/ModuleManage?moduleId=${midCreate}&cid=${cidCreate}" class="btn btn-danger">Cancel</a>
-                   
+                        <a href="../Project_E-Learning/ModuleManage?moduleId=${midCreate}&cid=${cidCreate}" class="btn btn-primary">Done</a>
                     </div>
                 </div>
             </form>
+
+            <form action="question?action=import" method="POST" enctype="multipart/form-data" class="upload-form" style="display: none;">
+                <input type="file" id="file-upload" name="file" accept=".xlsx">
+                <input type="hidden" name="midCreate" value="${midCreate}"/>
+                <input type="hidden" name="cidCreate" value="${cidCreate}"/>
+            </form>
         </div>
+
+        <script>
+        document.getElementById('importQuestionBtn').addEventListener('click', function() {
+            document.getElementById('file-upload').click();
+        });
+
+        document.getElementById('file-upload').addEventListener('change', function(event) {
+            const fileInput = event.target;
+            const file = fileInput.files[0];
+            const errorMessage = document.getElementById('error-message');
+
+            if (!file) {
+                errorMessage.textContent = 'No file uploaded or file is empty';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (file.size === 0) {
+                errorMessage.textContent = 'No file uploaded or file is empty';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            if (file.name !== 'Create_Question_Template.xlsx') {
+                errorMessage.textContent = 'Please Download File Create_Question_Template First, Fill Information And Import';
+                errorMessage.style.display = 'block';
+                return;
+            }
+
+            errorMessage.style.display = 'none';
+            document.querySelector('.upload-form').submit();
+        });
+    </script>
         <!-- jQuery -->
         <script src="${pageContext.request.contextPath}/assets/vendor/jquery.min.js"></script>
 
@@ -204,6 +250,7 @@
 
         <script src="${pageContext.request.contextPath}/lib/wow/wow.min.js"></script>
         <script src="${pageContext.request.contextPath}/lib/easing/easing.min.js"></script>
+
 
         <jsp:include page="canswer.jsp"></jsp:include>
         <jsp:include page="deletequestion.jsp"></jsp:include>

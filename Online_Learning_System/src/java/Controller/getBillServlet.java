@@ -92,7 +92,7 @@ public class getBillServlet extends HttpServlet {
             try {
                 String dateFormat = formaDate(date);
                 Payment payment = new Payment(Integer.parseInt(accId), Integer.parseInt(coureId), Date.valueOf(dateFormat), "VNPAY",Integer.parseInt(money) / 100);
-                Enrollment enrollment = new Enrollment(Integer.parseInt(accId), Integer.parseInt(coureId), Date.valueOf(dateFormat), 100);
+                Enrollment enrollment = new Enrollment(Integer.parseInt(accId), Integer.parseInt(coureId), Date.valueOf(dateFormat), 0);
                 LessonDAO dao = new LessonDAO();
                 dao.insertBillPayment(payment);
                 dao.insertEnrollment(enrollment);

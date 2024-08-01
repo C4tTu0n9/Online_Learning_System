@@ -55,6 +55,16 @@
             .btn:hover {
                 background-color: #e3f2e1;
             }
+            
+            .btnCancel {
+                background-color: #e57067;
+                color: #ffffff;
+                border-radius: 5px;
+            }
+            
+            .btnCancel:hover {
+                background-color: orangered !important;
+            }
             .footer {
                 text-align: center;
                 margin-top: 30px;
@@ -66,6 +76,7 @@
         </style>
     </head>
     <body>
+        
         <div class="container">
             <div class="header clearfix">
                 <img src="https://tekoventures.vn/wp-content/uploads/2018/09/vnpay-logo.jpg">
@@ -130,11 +141,31 @@
                         <input type="radio" id="language" name="language" value="en">
                         <label for="language">Tiếng Anh</label><br>
                     </div>
-                    <button style="margin-bottom: 30px" type="submit" class="btn btn-default">Thanh toán</button>
+                    <button style="margin-bottom: 30px" type="submit" class="btn btn-default">Pay </button>
+                        <%
+                        String address = request.getParameter("address");
+                        %>
+                    <button style="margin-bottom: 30px" type="button" onclick="Cancel('<%=address%>')" class="btn btnCancel btn-danger">Cancel</button>
                 </form>
             </div>
 
         </div>
+                    
+                    
+                <script>
+                    function Cancel(address) {
+                        if(address === 'home') {
+                            window.location.href = 'home';
+                        } else if(address === 'course') {
+                            window.location.href = 'listCourseSeverlet?cateid=all&action=course';
+                        } else {
+                            window.location.href = 'CourseDetail?cid='+address;
+                        }
+                    }
+            
+                </script>            
+                    
+                    
         <link href="https://pay.vnpay.vn/lib/vnpay/vnpay.css" rel="stylesheet" />
         <script src="https://pay.vnpay.vn/lib/vnpay/vnpay.min.js"></script>
         <script type="text/javascript">

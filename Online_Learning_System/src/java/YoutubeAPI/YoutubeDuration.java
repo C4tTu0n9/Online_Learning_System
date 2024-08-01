@@ -14,6 +14,8 @@ import com.google.api.services.youtube.model.VideoListResponse;
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  *
@@ -64,6 +66,27 @@ public class YoutubeDuration {
         }
         return videoDuration;
     }
+    
+    
+    public static String convertToEmbedLink(String url) {
+        String videoId = getYouTubeId(url);
+        if (videoId != null) {
+            return "https://www.youtube.com/embed/" + videoId;
+        }
+        return null;
+    }
+
+    
+    public static String getYouTubeId(String url) {
+    String pattern = "(?<=watch\\?v=|/videos/|embed\\/|youtu.be\\/|\\/v\\/|\\/e\\/|watch\\?v%3D|watch\\?v%3D|^)[a-zA-Z0-9_-]{11}";
+    Pattern compiledPattern = Pattern.compile(pattern);
+    Matcher matcher = compiledPattern.matcher(url);
+    if (matcher.find()) {
+        return matcher.group();
+    }
+    return null;
+}
+    
 
     public static YouTube getService() throws GeneralSecurityException, IOException {
         return new YouTube.Builder(GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), null)
@@ -127,6 +150,7 @@ public class YoutubeDuration {
         return d.getSeconds();
     }
 
+    
     public static String SumConvertToHoursAndMinutesLesson(long totalSeconds) {
         // Tính số giờ
         long hours = totalSeconds / 3600;

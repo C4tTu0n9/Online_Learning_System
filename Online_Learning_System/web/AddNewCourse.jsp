@@ -131,8 +131,30 @@
                                             <div class="form-group">
                                                 <label class="form-label">Change Image</label>
                                                 <div class="media-body ml-4">
-                                                    <input type="file" class="" name="image">
-                                                    <div class="text-black-50 small mt-1">Allowed JPG or PNG. Max size of 800K</div>
+                                                    <input type="file" id="imageFile" accept=".jpg, .jpeg, .png" class="" name="image">
+                                                    <script>
+                                                        document.getElementById('imageFile').addEventListener('change', function () {
+                                                            var file = this.files[0];
+                                                            var fileType = file.type;
+                                                            var match = ['image/jpeg', 'image/png', 'image/jpeg'];
+                                                            if (!match.includes(fileType)) {
+                                                                alert('Chỉ chấp nhận file JPG, JPEG hoặc PNG.');
+                                                                this.value = '';
+                                                                return false;
+                                                            }
+                                                        });
+                                                        function chooseFile(fileInput) {
+                                                            if (fileInput.files && fileInput.files[0]) {
+                                                                var reader = new FileReader();
+
+                                                                reader.onload = function (e) {
+                                                                    $('#image').attr('src', e.target.result);
+                                                                };
+                                                                reader.readAsDataURL(fileInput.files[0]);
+                                                            }
+                                                        }
+                                                    </script>
+                                                    <div class="text-black-50 small mt-1">Allowed JPG, JPEG or PNG</div>
                                                 </div>
                                             </div>
                                             <div class="form-group">

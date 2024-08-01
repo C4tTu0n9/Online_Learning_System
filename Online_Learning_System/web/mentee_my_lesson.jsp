@@ -116,7 +116,6 @@
 
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="home">Home</a></li>
-                        <li class="breadcrumb-item"><a href="student-browse-courses.html">Courses</a></li>
                         <li class="breadcrumb-item active">${lesson.getCoursename()}</li>
                 </ol>
                 <h1 class="page-heading h2">${lesson.getCoursename()}</h1>
@@ -419,7 +418,7 @@
                             </div>
                         </div>
 
-                        <a href="student-help-center.html" class="btn btn-default btn-block">
+                        <a href="#" class="btn btn-default btn-block">
                             <i class="material-icons btn__icon--left">help</i> Get Help
                         </a>
                     </div>

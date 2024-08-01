@@ -1,3 +1,4 @@
+
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
@@ -19,6 +20,11 @@ public class Quiz {
 
     public Quiz() {
     }
+
+    public Quiz(int quizId) {
+        this.quizId = quizId;
+    }
+    
 
     public Quiz(int quizId, int moduleId, int quizNumber, String quizName, Time quizTime, int passScore) {
         this.quizId = quizId;

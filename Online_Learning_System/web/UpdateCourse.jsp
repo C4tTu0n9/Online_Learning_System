@@ -176,8 +176,8 @@
                                                 <img style="width: 200px; height: auto; border-radius: 17px" src="${requestScope.my_managed_course.image}" id="image" alt="course image" class=" iamge d-block">
                                                 <label class="form-label">Change Image</label>
                                                 <div class="media-body ml-4">
-                                                    <input type="file" class="" name="image">
-                                                    <div class="text-black-50 small mt-1">Allowed JPG or PNG. Max size of 800K</div>
+                                                    <input type="file" id="imageFile" accept=".jpg, .jpeg, .png" class="" name="image">
+                                                    <div class="text-black-50 small mt-1">Allowed JPG, JPEG or PNG</div>
                                                 </div>
                                                 <input type="hidden" name="current_image" value="${requestScope.my_managed_course.image}">
                                             </div>
@@ -240,12 +240,12 @@
                                             </c:if>
                                             <br>
 
-
-                                            <!-- Form fields here -->
-                                            <div class="form-group" style="text-align: right;">
-                                                <button type="submit" class="btn btn-outline-primary">Save Change</button>
-                                            </div>
-
+                                            <c:if test="${my_role == 2}">
+                                                <!-- Form fields here -->
+                                                <div class="form-group" style="text-align: right;">
+                                                    <button type="submit" class="btn btn-outline-primary">Save Change</button>
+                                                </div>
+                                            </c:if>
 
                                         </div>
                                     </form>
@@ -262,15 +262,6 @@
             <script type="text/javascript">
             </script>
             <script>
-                document.addEventListener('DOMContentLoaded', function () {
-                    var form = document.getElementById('updateCourseForm');
-                    form.addEventListener('submit', function (event) {
-                        event.preventDefault(); // Prevent the form from submitting immediately
-                        if (confirm('Are you sure you want to save these changes?')) {
-                            this.submit(); // If user confirms, submit the form
-                        }
-                    });
-                });
                 document.addEventListener('DOMContentLoaded', function () {
                     function autoResize(textarea) {
                         textarea.style.height = 'auto';
@@ -318,6 +309,28 @@
                         });
                     });
                 });
+
+                //validate image input
+                document.getElementById('imageFile').addEventListener('change', function () {
+                    var file = this.files[0];
+                    var fileType = file.type;
+                    var match = ['image/jpeg', 'image/png', 'image/jpeg'];
+                    if (!match.includes(fileType)) {
+                        alert('Chỉ chấp nhận file JPG, JPEG hoặc PNG.');
+                        this.value = '';
+                        return false;
+                    }
+                });
+                function chooseFile(fileInput) {
+                    if (fileInput.files && fileInput.files[0]) {
+                        var reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            $('#image').attr('src', e.target.result);
+                        };
+                        reader.readAsDataURL(fileInput.files[0]);
+                    }
+                }
             </script>
 
         </div>

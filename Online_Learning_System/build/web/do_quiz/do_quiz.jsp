@@ -166,7 +166,7 @@
                 <h7 style="margin-bottom: 0px">${quizDoQuiz.getQuizName()}</h7>
             </div>
             <div class="timer col-5" id="timer">
-                <span id="hours">00</span>:<span id="minutes">25</span>:<span id="seconds">00</span>
+                <span id="hours">00</span>:<span id="minutes">00</span>:<span id="seconds">00</span>
             </div>
 
             <div class="collapse navbar-collapse" id="navbarCollapse">
@@ -206,7 +206,7 @@
             </form>
         </div>
 
-        <script>
+       <script>
     function saveTimerState(timeLeft) {
         sessionStorage.setItem('quizTimeLeft', timeLeft);
     }
@@ -232,7 +232,9 @@
             } else if (input.type === 'checkbox') {
                 let selectedValues = JSON.parse(sessionStorage.getItem(input.name)) || [];
                 if (input.checked) {
-                    selectedValues.push(input.value);
+                    if (!selectedValues.includes(input.value)) {
+                        selectedValues.push(input.value);
+                    }
                 } else {
                     selectedValues = selectedValues.filter(value => value !== input.value);
                 }
@@ -257,18 +259,6 @@
         });
     }
 
-    function clearSessionStorage(callback) {
-        sessionStorage.removeItem('quizTimeLeft');
-        sessionStorage.removeItem('quizSubmitted');
-        sessionStorage.clear();
-
-        setTimeout(() => {
-            if (typeof callback === 'function') {
-                callback();
-            }
-        }, 1);
-    }
-
     function updateTimer() {
         let hours = Math.floor(timeLeft / 3600);
         let minutes = Math.floor((timeLeft % 3600) / 60);
@@ -283,18 +273,24 @@
             saveTimerState(timeLeft);
             setTimeout(updateTimer, 1000);
         } else {
-            clearSessionStorage(() => submitQuiz());
+            submitQuiz1();
         }
     }
 
+    function submitQuiz1() {
+        saveQuizState(true);
+        quizForm.submit();
+        
+    }
+
     function submitQuiz() {
-        if (confirm('Are you sure you want to submit the quiz?')) { // Custom alert message
-            saveQuizState(true);
-            clearSessionStorage(() => {
-                quizForm.submit();
-            });
+        if (confirm('Are you sure you want to submit the quiz?')) {
+            submitQuiz1();
+            
         }
     }
+    
+   
 
     let timer = document.getElementById('timer');
     let hoursSpan = document.getElementById('hours');
@@ -328,60 +324,50 @@
         document.getElementById('answeredCount').textContent = answeredCount;
     }
 
-    function checkAndClearSessionStorage() {
-        if (sessionStorage.getItem('quizTimeLeft')) {
-            clearSessionStorage();
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', () => {
-        checkAndClearSessionStorage();
-        updateTimer();
-        loadSelections();
+        if (loadQuizState()) {
+            submitButton.disabled = true;
+            submitButton.style.display = 'none';
+        } else {
+            updateTimer();
+            loadSelections();
+            updateAnsweredCount();
 
-        document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach((input) => {
-            input.addEventListener('change', () => {
-                saveSelections();
-                updateAnsweredCount();
+            document.querySelectorAll('input[type=radio], input[type=checkbox]').forEach((input) => {
+                input.addEventListener('change', () => {
+                    saveSelections();
+                    updateAnsweredCount();
+                });
             });
-        });
 
-        submitButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            submitQuiz();
-        });
+            submitButton.addEventListener('click', (e) => {
+                e.preventDefault();
+                submitQuiz();
+            });
 
-        const backButton = document.querySelector('#backed');
-        let isAlertShown = false;
+            const backButton = document.querySelector('#backed');
+            let isAlertShown = false;
 
-        const showAlert = function(e) {
-            e.preventDefault();
-            if (!isAlertShown) {
-                isAlertShown = true;
-                if (confirm('Bạn đang thực hiện bài quiz, nếu thoát toàn bộ câu trả lời sẽ bị hủy. Bạn có chắc chắn muốn thoát?')) {
-                    clearSessionStorage(function() {
+            const showAlert = function(e) {
+                e.preventDefault();
+                if (!isAlertShown) {
+                    isAlertShown = true;
+                    if (confirm('You are taking a quiz. If you exit, all your answers will be discarded. Are you sure you want to exit?')) {
                         window.location.href = backButton.getAttribute('href');
-                    });
-                } else {
-                    isAlertShown = false;
+                    } else {
+                        isAlertShown = false;
+                    }
                 }
-            }
-        };
+            };
 
-        backButton.addEventListener('click', showAlert);
-
-        window.addEventListener('beforeunload', function(event) {
-            if (!isAlertShown) {
-                isAlertShown = true;
-                const confirmationMessage = 'Bạn đang thực hiện bài quiz, nếu thoát toàn bộ câu trả lời sẽ bị hủy. Bạn có chắc chắn muốn thoát?';
-                event.returnValue = confirmationMessage;
-                return confirmationMessage;
-            }
-        });
+            backButton.addEventListener('click', showAlert);
+        }
 
         updateAnsweredCount();
     });
 </script>
+
+
 
 
 

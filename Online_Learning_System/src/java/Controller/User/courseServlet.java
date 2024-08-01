@@ -15,6 +15,7 @@ import Model.Course;
 import Model.EnrollmentDTO;
 import Model.ProfileDTO;
 import Model.WishlistDTO;
+import Util.MyCommon;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -43,6 +44,9 @@ public class courseServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+    WishlistDAO wishlistDAO = new WishlistDAO();
+    EnrollmentDAO enrollDAO = new EnrollmentDAO();
+
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -76,14 +80,11 @@ public class courseServlet extends HttpServlet {
         String cid_str = request.getParameter("cid");
         String accid_str = request.getParameter("accid");
 
-        WishlistDAO wishlistDAO = new WishlistDAO();
-        EnrollmentDAO enrollDAO = new EnrollmentDAO();
         PrintWriter out = response.getWriter();
         HttpSession session = request.getSession();
         ProfileDTO my_profile = (ProfileDTO) session.getAttribute("profile");
 
         AccountDTO my_account = (AccountDTO) session.getAttribute("account");
-
 
         if (my_account == null) {
             response.sendRedirect("join?action=login");
@@ -103,9 +104,9 @@ public class courseServlet extends HttpServlet {
         ArrayList<WishlistDTO> wish_list = wishlistDAO.getWishListByAccId(my_account.getAccount_id());
         request.setAttribute("wish_list", wish_list);
 
-         //hiện thị ra các category trên header
-                displaycategory(request, response);
-        
+        //hiện thị ra các category trên header
+        displaycategory(request, response);
+
         request.getRequestDispatcher("MyCourses.jsp").forward(request, response);
     }
 
@@ -120,7 +121,20 @@ public class courseServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        String cid = request.getParameter("cid");
+        PrintWriter out = response.getWriter();
+        HttpSession session = request.getSession();
+        AccountDTO my_account = MyCommon.getMyAccount(request, response);
+        String action = request.getParameter("action") == null ? "" : request.getParameter("action");
+        switch (action) {
+            case "delete_wishList":
+                deleteFromWishList(my_account.getAccount_id(), cid, response, request);
+                break;
+            default:
+                request.getRequestDispatcher("MyCourses.jsp").forward(request, response);
+        }
+        request.getRequestDispatcher("MyCourses.jsp").forward(request, response);
+
     }
 
     /**
@@ -133,9 +147,7 @@ public class courseServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
-    
-    
-        public void displaycategory(HttpServletRequest request, HttpServletResponse response)
+    public void displaycategory(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
             HomeDAO dao = new HomeDAO();
@@ -144,5 +156,11 @@ public class courseServlet extends HttpServlet {
         } catch (SQLException ex) {
             Logger.getLogger(CourseDetailServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
+    }
+
+    private void deleteFromWishList(int account_id, String cid, HttpServletResponse response, HttpServletRequest request) {
+        wishlistDAO.deleteCourseWishList(account_id, cid);
+        String activeTab = request.getParameter("activeTab");
+        request.setAttribute("activeTab", activeTab);
     }
 }

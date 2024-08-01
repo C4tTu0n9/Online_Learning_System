@@ -155,12 +155,12 @@
                                         <div class="tab-pane fade active show" id="account-general">
 
                                             <h4 style="color: #339900">${requestScope.success_avatar}</h4>
-                                            <div class="card-body media align-items-center">
-                                                <img src="${sessionScope.profile.avt}" id="image" alt="avatar" class=" iamge d-block ui-w-80">
+                                        <div class="card-body media align-items-center">
+                                            <img src="${sessionScope.profile.avt}" id="image" alt="avatar" class=" iamge d-block ui-w-80">
 
                                             <div class="media-body ml-4">
-                                                <input type="file" class="" name="avt" onchange="chooseFile(this)">
-                                                <div class="text-black-50 small mt-1">Allowed JPG, GIF or PNG. Max size of 800K</div>
+                                                <input type="file" id="imageFile" accept=".jpg, .jpeg, .png" class="" name="avt">
+                                                <div class="text-black-50 small mt-1">Allowed JPG, JPEG or PNG</div>
                                             </div>
                                         </div>
                                         <hr class="border-light m-0">
@@ -175,10 +175,10 @@
                                             <div class="form-group">
                                                 <label class="form-label">E-mail</label>
                                                 <input readonly="" name="email" type="text" class="form-control mb-1" value="${sessionScope.account.email}">
-                                                <div class="alert alert-warning mt-3">
-                                                    Your email is not confirmed. Please check your inbox.<br>
-                                                    <a href="javascript:void(0)">Resend confirmation</a>
-                                                </div>
+                                                <!--                                                <div class="alert alert-warning mt-3">
+                                                                                                    Your email is not confirmed. Please check your inbox.<br>
+                                                                                                    <a href="javascript:void(0)">Resend confirmation</a>
+                                                                                                </div>-->
                                             </div>
                                             <!--                                        <div class="form-group">
                                                                                         <label class="form-label">Company</label>
@@ -408,7 +408,16 @@
                 <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
                 <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.0/dist/js/bootstrap.bundle.min.js"></script>
                 <script type="text/javascript">
-
+                                                    document.getElementById('imageFile').addEventListener('change', function () {
+                                                        var file = this.files[0];
+                                                        var fileType = file.type;
+                                                        var match = ['image/jpeg', 'image/png', 'image/jpeg'];
+                                                        if (!match.includes(fileType)) {
+                                                            alert('Chỉ chấp nhận file JPG,JPEG hoặc PNG.');
+                                                            this.value = '';
+                                                            return false;
+                                                        }
+                                                    });
                 </script>
 
             </div>

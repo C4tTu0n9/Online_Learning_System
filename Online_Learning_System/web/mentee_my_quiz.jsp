@@ -70,7 +70,7 @@
 
     <style>
         .active-quiz {
-            background-color: #33ff33; /* Màu xanh nhạt */
+            background-color: #ffcccc; /* Màu xanh nhạt */
         }
         .rounded-circle{
             height: 50px;
@@ -84,18 +84,13 @@
             margin-top: 10px;
         }
 
-
-        .active-quiz {
-            background-color: #f9c2ff; /* Màu nền cho quiz đã chọn */
-        }
-
         .lesson-completed {
             background-color: #d4edda; /* Màu nền cho bài học đã hoàn thành */
             text-decoration: line-through; /* Gạch ngang bài học đã hoàn thành */
         }
 
         .quiz-completed {
-            background-color: #c3e6cb; /* Màu nền cho quiz đã hoàn thành */
+            background-color: #33cc00; /* Màu nền cho quiz đã hoàn thành */
             text-decoration: line-through; /* Gạch ngang quiz đã hoàn thành */
         }
 
@@ -116,7 +111,6 @@
 
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="home">Home</a></li>
-                        <li class="breadcrumb-item"><a href="student-browse-courses.html">Courses</a></li>
                         <li class="breadcrumb-item active">${lesson.getCoursename()}</li>
                 </ol>
                 <div class="row">
@@ -127,10 +121,10 @@
                         </div><br><br><br>
                         <div style="margin-left: 70%;">
                             <c:if test="${score == null}">
-                                <a style="width: 200px; height: 60px; font-size: 30px" href="doquiz?mid=${quizDoQuiz.getModuleId()}&action=do_quiz" class="btn btn-outline-primary">Do quiz</a>
+                                <a style="width: 200px; height: 60px; font-size: 30px" href="doquiz?mid=${quizDoQuiz.getModuleId()}&action=do_quiz" class="btn btn-outline-primary quiz-btn">Do quiz</a>
                             </c:if>
                             <c:if test="${score != null}">
-                                <a style="width: 200px; height: 60px; font-size: 30px" href="doquiz?mid=${quizDoQuiz.getModuleId()}&action=do_quiz" class="btn btn-outline-primary">Again</a>
+                                <a style="width: 200px; height: 60px; font-size: 30px" href="doquiz?mid=${quizDoQuiz.getModuleId()}&action=do_quiz" class="btn btn-outline-primary quiz-btn">Again</a>
 
                             </c:if>
                         </div><br><br>
@@ -144,7 +138,14 @@
                             </div>
                             <div class="col-4 card_mine">
                                 <h3>Your grade:</h3>
-                                <span>${score.getScore()}</span>
+                                Max Score: ${my_max_score.getScore()}
+                                <c:if test="${my_max_score != null && my_max_score.is_pass}">
+                                    <span style="color: #33cc00">Pass</span>
+                                </c:if><br>
+                                <c:if test="${my_max_score != null && !my_max_score.is_pass}">
+                                    <span style="color: #cc0033">Not Pass</span>
+                                </c:if><br>
+                                <span>Last Score: ${score.getScore()}</span>
                             </div>
                         </div>
 
@@ -247,12 +248,12 @@
                                             <c:forEach items="${quizLits}" var="j" varStatus="status">
                                                 <div class="module-content">
                                                     <c:if test="${o.getModuleid() == j.getModuleId()}">
-                                                        <a style="color: black" class="btn btn-block btn--col quiz-item" data-quizid="${j.getQuizId()}" href="doquiz?mid=${j.getModuleId()}&cid=${j.course_id}"> 
-                                                            ${j.getQuizName()}
-                                                            <div>
-                                                                <small class="text-muted module-lesson" style="color: black">Do quiz</small>
-                                                            </div>
-                                                        </a>
+                                                            <a style="color: black" class="btn btn-block btn--col quiz-item" data-quizid="${j.getQuizId()}" href="doquiz?mid=${j.getModuleId()}&cid=${j.course_id}"> 
+                                                                ${j.getQuizName()}
+                                                                <div>
+                                                                    <small class="text-muted module-lesson" style="color: black">Do quiz</small>
+                                                                </div>
+                                                            </a>
                                                     </c:if>
                                                 </div>
                                             </c:forEach> 
@@ -362,6 +363,15 @@
             sessionStorage.removeItem('quizSubmitted');
             sessionStorage.clear();
         }
+        
+        document.addEventListener("DOMContentLoaded", function () {
+            const quizButtons = document.querySelectorAll('.quiz-btn');
+            quizButtons.forEach(button => {
+                button.addEventListener('click', function (e) {
+                    clearSessionStorage();
+                });
+            });
+        });
 
         document.addEventListener('DOMContentLoaded', () => {
             clearSessionStorage(); // Xóa session storage ngay khi trang được tải

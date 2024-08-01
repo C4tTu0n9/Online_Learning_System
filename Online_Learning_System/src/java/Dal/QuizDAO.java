@@ -315,6 +315,57 @@ public class QuizDAO extends DBContext {
         return listFound;
     }
 
+    public ArrayList<Quiz> getListQuizByCourseId(int course_id) {
+        ArrayList<Quiz> listFound = new ArrayList<>();
+        // connect with DB
+        connection = getConnection();
+        // viết câu lệnh sql
+        String sql = " select * from Quiz where ModuleId in (select ModuleId from Module where CourseId = ?)";
+        try {
+            // tạo đối tượng preparestatement
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, course_id);
+            // thực thi câu lệnh
+            resultSet = statement.executeQuery();
+            // trả về kết quả
+            while (resultSet.next()) {
+                int quiz_id = resultSet.getInt("QuizId");
+                int module_id = resultSet.getInt("ModuleId");
+                String quiz_name = resultSet.getString("QuizName");
+                listFound.add(new Quiz());
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return listFound;
+    }
+
+    public ArrayList<Quiz> getListQuizPassed(int account_id, int course_id) {
+        ArrayList<Quiz> listFound = new ArrayList<>();
+        // connect with DB
+        connection = getConnection();
+        // viết câu lệnh sql
+        String sql = " select distinct(QuizId) from ScoreQuiz where AccountId = ? and IsPass = 1 "
+                + "and QuizId in (select QuizId from Quiz "
+                + "where ModuleId in (select ModuleId from Module where CourseId = ?))";
+        try {
+            // tạo đối tượng preparestatement
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, account_id);
+            statement.setInt(2, course_id);
+            // thực thi câu lệnh
+            resultSet = statement.executeQuery();
+            // trả về kết quả
+            while (resultSet.next()) {
+                int quiz_id = resultSet.getInt(1);
+                listFound.add(new Quiz(quiz_id));
+            }
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+        return listFound;
+    }
+
     public ArrayList<Answer> getListAnswers(Questions questions) {
         ArrayList<Answer> listFound = new ArrayList<>();
         // connect with DB
@@ -446,10 +497,11 @@ public class QuizDAO extends DBContext {
     public Quiz findQuizByModuleId(int moduleIdSelect) {
         connection = getConnection();
 
-        String sql = "select *\n"
-                + "from Quiz q \n"
-                + "join Module m on  q.ModuleId = m.ModuleId\n"
-                + "where m.ModuleId = ?";
+        String sql = """
+                     select *
+                     from Quiz q 
+                     join Module m on  q.ModuleId = m.ModuleId
+                     where m.ModuleId = ?""";
         try {
             statement = connection.prepareStatement(sql);
             statement.setInt(1, moduleIdSelect);
@@ -461,8 +513,9 @@ public class QuizDAO extends DBContext {
                 String quizName = resultSet.getString(3);
                 Time quizTime = resultSet.getTime(4);
                 int passScore = resultSet.getInt(5);
+                int course_id = resultSet.getInt("CourseId");
 
-                Quiz quiz = new Quiz(quizId, moduleId, quizName, quizTime, passScore);
+                Quiz quiz = new Quiz(quizId, moduleId, quizName, quizTime, passScore, course_id);
                 return quiz;
             }
         } catch (SQLException ex) {
@@ -780,7 +833,35 @@ public class QuizDAO extends DBContext {
                 int accountId = resultSet.getInt("accountId");
                 int quizId = resultSet.getInt("quizId");
                 float Score = resultSet.getFloat("Score");
-                ScoreQuiz score = new ScoreQuiz(accountId, quizId, Score);
+                boolean is_pass = resultSet.getBoolean("IsPass");
+                ScoreQuiz score = new ScoreQuiz(accountId, quizId, Score, is_pass);
+                return score;
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+    public ScoreQuiz getMaxMyScoreInQuiz(int account_id, int quizIdSelect) {
+        connection = getConnection();
+        String sql = """
+                    SELECT TOP 1 * 
+                    FROM ScoreQuiz 
+                    WHERE AccountId = ? AND QuizId = ? 
+                    ORDER BY Score DESC""";
+        try {
+            statement = connection.prepareStatement(sql);
+            statement.setInt(1, account_id);
+            statement.setInt(2, quizIdSelect);
+            // thực thi câu lệnh
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int accountId = resultSet.getInt("accountId");
+                int quizId = resultSet.getInt("quizId");
+                float Score = resultSet.getFloat("Score");
+                boolean is_pass = resultSet.getBoolean("IsPass");
+                ScoreQuiz score = new ScoreQuiz(accountId, quizId, Score, is_pass);
                 return score;
             }
         } catch (SQLException ex) {
@@ -850,17 +931,21 @@ public class QuizDAO extends DBContext {
     // inser  Score  này để lư trữ điểm số của sinh viên khi làm 
     public void insertcoreQuiz(ScoreQuiz scorequiz) {
         connection = getConnection();
-        String sql = "INSERT INTO [dbo].[ScoreQuiz]\n"
-                + "           ([AccountId]\n"
-                + "           ,[QuizId]\n"
-                + "           ,[Score])\n"
-                + "     VALUES\n"
-                + "           (?,?,?)";
+        String sql = """
+                     INSERT INTO [dbo].[ScoreQuiz]
+                                ([AccountId]
+                                ,[QuizId]
+                                ,[Score]
+                                ,[IsPass]
+                     )
+                          VALUES
+                                (?,?,?,?)""";
         try {
             statement = connection.prepareStatement(sql);
             statement.setInt(1, scorequiz.getAccountId());
             statement.setInt(2, scorequiz.getQuizId());
             statement.setFloat(3, scorequiz.getScore());
+            statement.setBoolean(4, scorequiz.isIs_pass());
             // thực thi câu lệnh
             statement.executeUpdate();
         } catch (SQLException ex) {
@@ -1044,7 +1129,7 @@ public class QuizDAO extends DBContext {
             statement = connection.prepareStatement(sql);
             statement.setInt(1, quizId);
             statement.setInt(2, account_id);
-            
+
             statement.executeUpdate();
         } catch (SQLException ex) {
             ex.printStackTrace();

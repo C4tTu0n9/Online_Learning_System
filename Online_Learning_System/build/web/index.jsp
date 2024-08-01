@@ -113,37 +113,8 @@
 
                                             <c:otherwise><!--Nguoi dung da dang nhap-->
 
-
-                                                <!--Nguoi này là ngươi tao ra khoa hoc duoc join truc tiep-->
-                                                <c:choose>
-                                                    <c:when test="${o.getCreate_by() == sessionScope.account.getAccount_id()}">
-                                                        <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Join Now</a>
-                                                    </c:when>
-
-                                                    <c:otherwise>
-
-                                                        <c:set var="currentCourseId" value="${o.getCourse_id()}"/>
-                                                        <c:set var="isPaid" value="false"/>
-                                                        <c:if test="${fn:length(listEnrollment) > 0}">
-                                                            <c:forEach items="${listEnrollment}" var="i">
-                                                                <c:if test="${currentCourseId == i.getCourseid()}">                   
-                                                                    <c:set var="isPaid" value="true"/>
-                                                                </c:if>
-                                                            </c:forEach>
-                                                        </c:if>
-                                                        <c:choose>
-                                                            <c:when test="${isPaid == true}">
-                                                                <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Join Now</a>
-                                                            </c:when>
-                                                            <c:otherwise>
-                                                                <a href="vnpay_pay.jsp?price=${o.getPrice()}&cid=${o.getCourse_id()}&acc=${sessionScope.account.getAccount_id()}&ndck=${sessionScope.profile.fullname} chuyen khoan"" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Join Now</a>
-                                                            </c:otherwise>
-
-                                                        </c:choose> 
-
-
-                                                    </c:otherwise> 
-                                                </c:choose>
+                                                        <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}&price=${o.getPrice()}&ndck=${sessionScope.profile.fullname}&address=home" class="btn btn-light py-md-3 px-md-5 animated slideInRight">Join Now</a>
+                                                 
                                             </c:otherwise>
                                         </c:choose>
 
@@ -353,7 +324,7 @@
                                             <c:otherwise><!--Nguoi dung da dang nhap-->
 
 
-                                            <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}&price=${o.getPrice()}&ndck=${sessionScope.profile.fullname}" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
+                                            <a href="dataTransferLesson?cid=${o.getCourse_id()}&lessonid=${o.getFirstlessonid()}&createBy=${o.getCreate_by()}&price=${o.getPrice()}&ndck=${sessionScope.profile.fullname}&address=home" class="flex-shrink-0 btn btn-sm btn-primary px-3" style="border-radius: 0 30px 30px 0;">Join Now</a>
 
 
 

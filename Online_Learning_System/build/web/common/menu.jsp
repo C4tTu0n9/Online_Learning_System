@@ -53,16 +53,17 @@
                             </div>
                         </div>-->
             <c:choose>
-                <c:when test="${sessionScope.account.role_id == 1}" >
-                <a href="dasboard_for_admin/StatisticalSeverlet" class="nav-item nav-link">Dasboard</a>
-            </c:when>
+                <c:when test="${sessionScope.account.role_id == 2}">
+                    <a href="dasboard_for_admin/StatisticalSeverlet" class="nav-item nav-link">Dashboard</a>
+                </c:when>
+                <c:when test="${sessionScope.account.role_id == 1}">
+                    <a href="dasboard_for_admin/managerAccount" class="nav-item nav-link">Dashboard</a>
+                </c:when>
                 <c:otherwise>
-                         <a href="contact.jsp" class="nav-item nav-link">Contact</a>
+                    <a href="contact.jsp" class="nav-item nav-link">Contact</a>
                 </c:otherwise>
-
-
             </c:choose>
-            
+
         </div>
 
         <c:if test="${sessionScope.account != null}">
@@ -77,12 +78,12 @@
                             <a class="dropdown-item" href="course-manage">Manager</a>
                         </c:if>
                         <c:if test="${sessionScope.account.role_id == 3}">
-                            <a class="dropdown-item" href="course-manage">Course Teaching</a>
+                            <a class="dropdown-item" href="course-manage">My Teaching</a>
                         </c:if>
                         <c:if test="${sessionScope.account.role_id == 3}">
                             <a class="dropdown-item" href="messenger?sender_id=${sessionScope.account.getAccount_id()}&receiver_id=0">Messenger</a>
                         </c:if>
-                             <a class="dropdown-item" href="certificate">My Certificate</a>
+                        <a class="dropdown-item" href="certificate">My Certificate</a>
                         <a class="dropdown-item" href="my-courses">My Learning</a>
                         <a class="dropdown-item" href="join?action=logout">Log Out</a>
                     </div>

@@ -7,6 +7,7 @@ package Controller.User;
 import Controller.CourseDetailServlet;
 import Dal.AccountDAO;
 import Dal.HomeDAO;
+import Dal.ProfileManageDAO;
 
 import Model.AccountDTO;
 import Model.Category;
@@ -35,7 +36,8 @@ import java.util.logging.Logger;
  */
 @MultipartConfig
 public class profileServlet extends HttpServlet {
-
+    ProfileManageDAO profile_dao = new ProfileManageDAO();
+    AccountDAO accountDAO = new AccountDAO();
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -137,12 +139,11 @@ public class profileServlet extends HttpServlet {
 
     private void changeInformationProfile(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         HttpSession session = request.getSession();
-//start get account data from session
-        ProfileDTO my_profile = (ProfileDTO) session.getAttribute("profile");
-        AccountDTO my_account = (AccountDTO) session.getAttribute("account");
+//start get account data from cookie account_id
+        AccountDTO my_account = MyCommon.getMyAccount(request, response);
+        ProfileDTO my_profile = accountDAO.getProfile(my_account);
 //end get account data from
 //data access object
-        AccountDAO accountDAO = new AccountDAO();
 
 //start get data from Profile.jsp 
         Part file_avt = request.getPart("avt");
@@ -192,11 +193,10 @@ public class profileServlet extends HttpServlet {
     private void changePassword(HttpServletRequest request, HttpServletResponse response) {
         HttpSession session = request.getSession();
 //start get account data from session
-        ProfileDTO my_profile = (ProfileDTO) session.getAttribute("profile");
-        AccountDTO my_account = (AccountDTO) session.getAttribute("account");
+        AccountDTO my_account = MyCommon.getMyAccount(request, response);
+        ProfileDTO my_profile = accountDAO.getProfile(my_account);
 //end get account data from
 //data access object
-        AccountDAO accountDAO = new AccountDAO();
 
         //start get data from Profile.jsp 
         String my_password = my_account.getPassword();

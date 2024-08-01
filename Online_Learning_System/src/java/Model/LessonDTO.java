@@ -88,6 +88,18 @@ public class LessonDTO {
         this.createby = createby;
     }
 
+    
+        // update lesson
+    public LessonDTO(int lessonid, int moduleid, String lessonname, String lessoncontent, String lessonvideo, long duration, int courseid ) {
+        this.lessonid = lessonid;
+        this.moduleid = moduleid;
+        this.lessonname = lessonname;
+        this.lessoncontent = lessoncontent;
+        this.lessonvideo = lessonvideo;
+        this.duration = duration;
+        this.courseid = courseid;
+    }
+    
     public int getLessonid() {
         return lessonid;
     }

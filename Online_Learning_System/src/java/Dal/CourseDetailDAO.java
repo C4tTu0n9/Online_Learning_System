@@ -57,7 +57,7 @@ public class CourseDetailDAO {
                                                 LEFT JOIN [dbo].[Enrollment] e ON cr.CourseId = e.CourseId
                                             WHERE
                                                 cr.[CourseCategoryId] = (SELECT [CourseCategoryId] FROM [dbo].[Course] WHERE [CourseId] = ?) 
-                                                AND cr.[CourseId] != ?
+                                                AND cr.[CourseId] != ? AND cr.Status = 1
                                             GROUP BY
                                                 cr.[CourseId],
                                                 cr.[CourseName],
@@ -92,7 +92,8 @@ public class CourseDetailDAO {
                 int status = rs.getInt(10);
                 String instructor = rs.getString(11);
                 int amountSudentJoin = rs.getInt(12);
-                list.add(new Course(course_id, course_name, description, instructor, image, price, cate_id, create_by, date, studyTime, status, amountSudentJoin));
+                int firsrLessonid = rs.getInt(13);
+                list.add(new Course(courseId, course_name, description, instructor, image, price, cate_id, create_by, date, studyTime, status, amountSudentJoin, firsrLessonid));
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -277,7 +278,7 @@ public class CourseDetailDAO {
     public static void main(String[] args) throws ClassNotFoundException, SQLException {
         CourseDetailDAO dao = new CourseDetailDAO();
 
-        System.out.println(dao.getCourseById(4));
+        System.out.println(dao.getRelateCourse(4));
 
 
     }
